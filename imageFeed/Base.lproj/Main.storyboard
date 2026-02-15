@@ -46,7 +46,7 @@
                                                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gk2-sR-ozt" userLabel="Like Button">
                                                     <rect key="frame" x="323" y="15" width="44" height="44"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                    <state key="normal" image="LikeButtonActive"/>
+                                                    <state key="normal" image="LikeButtonActive_icon"/>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" name="Background"/>
@@ -134,7 +134,7 @@
                                     <constraint firstAttribute="height" constant="44" id="eHQ-mE-78X"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Exit"/>
+                                <state key="normal" image="Exit_icon"/>
                                 <connections>
                                     <action selector="didTapLogoutButton:" destination="Xop-gR-KMO" eventType="touchUpInside" id="vFz-G1-TQu"/>
                                     <action selector="logoutButton:" destination="Xop-gR-KMO" eventType="touchUpInside" id="TrZ-NF-sw7"/>
@@ -159,7 +159,7 @@
                             <constraint firstItem="syD-pv-LJ9" firstAttribute="top" secondItem="gD6-Kb-QWf" secondAttribute="bottom" constant="8" id="zi2-Ng-11p"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="2Nh-5V-Ps3"/>
+                    <tabBarItem key="tabBarItem" title="" image="tabProfileActive_icon" id="2Nh-5V-Ps3"/>
                     <connections>
                         <outlet property="avatarImageView" destination="gD6-Kb-QWf" id="zih-4a-vOy"/>
                         <outlet property="descriptionLabel" destination="158-Ol-9YT" id="6jA-2S-wPU"/>
@@ -198,7 +198,7 @@
         <scene sceneID="glY-zm-R8m">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="8pw-q0-fLR" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="tab_editorial_active" id="by5-kc-IUe"/>
+                    <tabBarItem key="tabBarItem" title="" image="tabEditorialActive_icon" landscapeImage="tabEditorialActive_icon" id="by5-kc-IUe"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="dlc-fO-dpe">
                         <rect key="frame" x="0.0" y="118" width="393" height="54"/>
@@ -228,10 +228,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="0xv-Yr-m8s">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZlZ-C2-0Ui" userLabel="ScrollView">
+                                <rect key="frame" x="-20" y="-20" width="433" height="892"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="0xv-Yr-m8s">
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <viewLayoutGuide key="contentLayoutGuide" id="Ib4-NM-Jy1"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="4xR-Hp-4h1"/>
+                                <connections>
+                                    <outlet property="delegate" destination="06a-cz-W3Q" id="dHB-tH-MHK"/>
+                                </connections>
+                            </scrollView>
                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25x-Fg-X0i" userLabel="BackwardButton">
                                 <rect key="frame" x="8" y="67" width="44" height="44"/>
                                 <constraints>
@@ -241,9 +251,21 @@
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="h9P-Fu-jIg"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Backward"/>
+                                <state key="normal" image="Back_icon"/>
                                 <connections>
                                     <action selector="didTapBackButton" destination="06a-cz-W3Q" eventType="touchUpInside" id="Esq-Wf-9cl"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jOz-Ba-3bF" userLabel="ShareButton">
+                                <rect key="frame" x="171.66666666666666" y="751" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="eAi-Rf-NfA"/>
+                                    <constraint firstAttribute="width" constant="50" id="enz-QO-bXe"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="Share_icon"/>
+                                <connections>
+                                    <action selector="didTapShareButton:" destination="06a-cz-W3Q" eventType="touchUpInside" id="7OF-VL-hCe"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -251,12 +273,19 @@
                         <color key="backgroundColor" name="Background"/>
                         <constraints>
                             <constraint firstItem="25x-Fg-X0i" firstAttribute="leading" secondItem="5to-Q7-Exv" secondAttribute="leading" constant="8" id="13F-sg-vUY"/>
+                            <constraint firstItem="5to-Q7-Exv" firstAttribute="trailing" secondItem="ZlZ-C2-0Ui" secondAttribute="trailing" id="JSc-mz-MIu"/>
+                            <constraint firstItem="ZlZ-C2-0Ui" firstAttribute="leading" secondItem="5to-Q7-Exv" secondAttribute="leading" id="ROp-eb-Gws"/>
+                            <constraint firstAttribute="bottom" secondItem="ZlZ-C2-0Ui" secondAttribute="bottom" id="UII-At-8la"/>
                             <constraint firstItem="25x-Fg-X0i" firstAttribute="top" secondItem="5to-Q7-Exv" secondAttribute="top" constant="8" id="W2G-eX-OtV"/>
+                            <constraint firstItem="5to-Q7-Exv" firstAttribute="bottom" secondItem="jOz-Ba-3bF" secondAttribute="bottom" constant="17" id="gSL-fO-dm2"/>
+                            <constraint firstItem="jOz-Ba-3bF" firstAttribute="centerX" secondItem="5to-Q7-Exv" secondAttribute="centerX" id="k5f-O4-uFi"/>
+                            <constraint firstItem="ZlZ-C2-0Ui" firstAttribute="top" secondItem="DXZ-kZ-Dx0" secondAttribute="top" id="vA8-TD-alF"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="F4q-LN-4gD"/>
                     <connections>
                         <outlet property="imageView" destination="0xv-Yr-m8s" id="mtw-WF-Zs8"/>
+                        <outlet property="scrollView" destination="ZlZ-C2-0Ui" id="Vwm-CT-kuO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jg2-0J-t4i" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -266,12 +295,13 @@
     </scenes>
     <resources>
         <image name="0" width="1600" height="1059"/>
-        <image name="Backward" width="24" height="24"/>
-        <image name="Exit" width="44" height="44"/>
-        <image name="LikeButtonActive" width="44" height="44"/>
+        <image name="Back_icon" width="24" height="24"/>
+        <image name="Exit_icon" width="44" height="44"/>
+        <image name="LikeButtonActive_icon" width="44" height="44"/>
         <image name="Photo" width="70" height="70"/>
-        <image name="tab_editorial_active" width="30" height="30"/>
-        <image name="tab_profile_active" width="30" height="30"/>
+        <image name="Share_icon" width="50" height="50"/>
+        <image name="tabEditorialActive_icon" width="30" height="30"/>
+        <image name="tabProfileActive_icon" width="30" height="30"/>
         <namedColor name="Background">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

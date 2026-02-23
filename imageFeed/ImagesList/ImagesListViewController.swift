@@ -1,15 +1,12 @@
 import UIKit
 
 // MARK: - ImageListViewController
-
 final class ImagesListViewController: UIViewController {
     
     // MARK: - IB Outlets
-    
     @IBOutlet private weak var tableView: UITableView!
     
     // MARK: - Private Properties
-    
     private let photosName = (0..<20).map(String.init)
     private let showSingleImageIdentifier = "ShowSingleImage"
     
@@ -21,7 +18,6 @@ final class ImagesListViewController: UIViewController {
     }()
     
     // MARK: - Overrides Methods
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -45,7 +41,6 @@ final class ImagesListViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    
     private func setupTableView() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
@@ -65,7 +60,6 @@ final class ImagesListViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource
-
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return photosName.count
@@ -84,7 +78,6 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: showSingleImageIdentifier, sender: indexPath)

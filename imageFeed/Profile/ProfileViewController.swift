@@ -71,10 +71,3 @@ final class ProfileViewController: UIViewController {
         logoutButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 45).isActive = true
     }
 }
-
-
-
-
-
-
-

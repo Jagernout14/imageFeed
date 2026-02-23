@@ -15,6 +15,9 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
+    // MARK: - Private Properties
+    private var hasPerformedInitialScaling = false
+    
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +28,14 @@ final class SingleImageViewController: UIViewController {
         guard let image else { return }
         imageView.image = image
         imageView.frame.size = image.size
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard !hasPerformedInitialScaling, let image else { return }
         rescaleAndCenterImageInScrollView(image: image)
+        hasPerformedInitialScaling = true
     }
     
     // MARK: - IB Actions

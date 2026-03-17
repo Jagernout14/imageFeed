@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2847A7A42F55B04D00323030 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2847A79C2F55A3C100323030 /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		285DBDA72F2E04B500560265 /* imageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2847A77B2F55756000323030 /* imageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2847A79C2F55A3C100323030 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,26 +41,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2847A7A42F55B04D00323030 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2847A79B2F55A3C100323030 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2847A79C2F55A3C100323030 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		285DBD9E2F2E04B500560265 = {
 			isa = PBXGroup;
 			children = (
 				285DBDA92F2E04B500560265 /* imageFeed */,
-				285DBDA82F2E04B500560265 /* Products */,
+				2847A77B2F55756000323030 /* imageFeed.app */,
+				2847A79B2F55A3C100323030 /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		285DBDA82F2E04B500560265 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				285DBDA72F2E04B500560265 /* imageFeed.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,7 +87,7 @@
 			packageProductDependencies = (
 			);
 			productName = imageFeed;
-			productReference = 285DBDA72F2E04B500560265 /* imageFeed.app */;
+			productReference = 2847A77B2F55756000323030 /* imageFeed.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -108,7 +115,7 @@
 			mainGroup = 285DBD9E2F2E04B500560265;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 285DBDA82F2E04B500560265 /* Products */;
+			productRefGroup = 285DBD9E2F2E04B500560265;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

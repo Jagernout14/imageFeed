@@ -79,4 +79,3 @@ extension SingleImageViewController: UIScrollViewDelegate {
         return imageView
     }
 }
-

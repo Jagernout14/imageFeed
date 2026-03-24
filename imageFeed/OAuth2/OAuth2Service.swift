@@ -27,7 +27,7 @@ final class OAuth2Service {
             case .success(let data):
                 do {
                     let decoder = JSONDecoder()
-                    let tokenResponse = try decoder.decode(OAuthTokenResponceBody.self, from: data)
+                    let tokenResponse = try decoder.decode(OAuthTokenResponseBody.self, from: data)
                     self.tokenStorage.token = tokenResponse.accessToken
                     print("Получен и сохранен токен \(tokenResponse.accessToken)")
                     DispatchQueue.main.async {

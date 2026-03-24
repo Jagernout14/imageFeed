@@ -1,4 +1,4 @@
-struct OAuthTokenResponceBody: Codable {
+struct OAuthTokenResponseBody: Codable {
     let accessToken: String
     let tokenType: String
     let scope: String

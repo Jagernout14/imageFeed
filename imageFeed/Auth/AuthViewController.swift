@@ -1,9 +1,11 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     
     // MARK: - Public Properties
     let showWebViewSegueIdentifier = "ShowWebView"
+    private let oauth2ServiceToken = OAuth2Service.shared
     weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - Overrides Methods
@@ -33,20 +35,34 @@ final class AuthViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = UIColor(named: "IF_Black")
     }
+    
+    private func fetchOAuthToken(_ code: String, completion: @escaping(Result <String, Error>) -> Void) {
+        oauth2ServiceToken.fetchOAuthToken(code: code) { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+    }
 }
 
 // MARK: - WebViewViewControllerDelegate
 extension  AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
         vc.dismiss(animated: true)
+        ProgressHUD.animate()
         
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+        fetchOAuthToken(code) { [weak self] result in
+            ProgressHUD.dismiss()
+            
+            guard let self else { return }
+            
             switch result {
             case .success(let token):
+                self.delegate?.didAuthenticate(self)
                 print("Успешная авторизация. Токен \(token)")
             case .failure(let error):
                 print("Не удалось авторизироваться. Ошибка \(error)")
+                break
             }
         }
     }

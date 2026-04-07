@@ -9,9 +9,15 @@ final class ProfileViewController: UIViewController {
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton(type: .system)
     
+    private let profileService = ProfileService.shared
+    
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(with: profile)
+        }
         
         setupAvatar()
         setupNameLabel()
@@ -19,6 +25,15 @@ final class ProfileViewController: UIViewController {
         setupDescriptionLabel()
         setupLogoutButton()
     }
+    
+    // MARK: - Private Methods
+    private func updateProfileDetails(with profile: Profile) {
+        usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
+        accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
+        descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
+    }
+    
+    
     // MARK: - UI Settings
     private func setupAvatar() {
         let avatarPic = UIImage(named: "UserPic")
@@ -30,6 +45,7 @@ final class ProfileViewController: UIViewController {
         avatarPicView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
         avatarPicView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
     }
+    
     private func setupNameLabel() {
         usernameLabel.text = "Екатерина Новикова"
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 23)

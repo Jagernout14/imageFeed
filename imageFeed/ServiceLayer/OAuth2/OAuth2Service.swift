@@ -55,7 +55,7 @@ final class OAuth2Service {
                         completion(.success(tokenResponse.accessToken))
                     } catch {
                         print("Ошибка декодирования ответа \(error)")
-                            completion(.failure(NetworkError.decodingError(error)))
+                        completion(.failure(NetworkError.decodingError(error)))
                     }
                     
                 case .failure(let error):
@@ -105,4 +105,3 @@ private func makeOAuthTokenRequest(code: String) -> URLRequest? {
     
     return request
 }
-

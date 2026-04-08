@@ -28,6 +28,7 @@ final class ProfileService {
     
     // MARK: - Public Properties
     static let shared = ProfileService()
+    private init() {}
     
     // MARK: - Private Properties
     private var task: URLSessionTask?

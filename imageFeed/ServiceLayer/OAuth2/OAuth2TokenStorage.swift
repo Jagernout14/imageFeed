@@ -2,6 +2,8 @@ import Foundation
 class OAuth2TokenStorage {
     
     // MARK: - Public Properties
+    static let shared = OAuth2TokenStorage()
+    
     var token: String? {
         get {
             return userDefaults.string(forKey: tokenKey)

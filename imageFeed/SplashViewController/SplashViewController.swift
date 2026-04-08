@@ -13,9 +13,9 @@ final class SplashViewController: UIViewController {
     }
     
     // MARK: - Private Properties
-    private let storage = OAuth2TokenStorage()
+    private let storage = OAuth2TokenStorage.shared
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthScreen"
-    private let profileService = ProfileService()
+    private let profileService = ProfileService.shared
     private var isProfileIsLoaded = false
     
     // MARK: - Overrides Methods
@@ -63,7 +63,8 @@ final class SplashViewController: UIViewController {
             }
             
             switch result {
-            case .success:
+            case .success(let profile):
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
                 self.switchToTabBarController()
             case .failure(let error):
                 print("Error \(error)")

@@ -24,7 +24,68 @@ final class ProfileViewController: UIViewController {
         setupAccountLabel()
         setupDescriptionLabel()
         setupLogoutButton()
+        
+        /*if let avatarURL = ProfileImageService.shared.avatarURL,
+         let url = URL(string: avatarURL) {
+         //TODO: Kingfisher
+         } */
+        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            guard let self else {
+                return
+            }
+            self.updateAvatar()
+        }
+        updateAvatar()
     }
+    
+    // MARK: - Observer Construction
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else {
+            return
+        }
+        //TODO: Kingfisher
+    }
+    
+    /*override init(nibName: String?, bundle: Bundle?) {
+     super.init(nibName: nibName, bundle: bundle)
+     addObserver()
+     }
+     
+     required init?(coder: NSCoder) {
+     super.init(coder: coder)
+     addObserver()
+     }
+     
+     deinit {
+     removeObserver()
+     }
+     
+     private func addObserver() {
+     NotificationCenter.default.addObserver(self, selector: #selector(updateAvatar(notification:)), name: ProfileImageService.didChangeNotification, object: nil)
+     }
+     
+     private func removeObserver() {
+     NotificationCenter.default.removeObserver(self, name: ProfileImageService.didChangeNotification, object: nil)
+     }
+     
+     @objc
+     private func updateAvatar(notification: Notification) {
+     guard isViewLoaded,
+     let userInfo = notification.userInfo,
+     let profileImageURL = userInfo["URL"] as? String,
+     let url = URL(string: profileImageURL)
+     else {
+     return
+     }
+     
+     //TODO: Kingfisher
+     }
+     */
     
     // MARK: - Private Methods
     private func updateProfileDetails(with profile: Profile) {
@@ -32,7 +93,6 @@ final class ProfileViewController: UIViewController {
         accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
         descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
     }
-    
     
     // MARK: - UI Settings
     private func setupAvatar() {

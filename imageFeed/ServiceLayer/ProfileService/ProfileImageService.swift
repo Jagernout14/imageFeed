@@ -44,29 +44,26 @@ final class ProfileImageService {
         guard let request = makeProfileImageURLRequest(username: username, token: token) else {
             completion(.failure(URLError(.badURL)))
             //NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
-
+            
             return
         }
-        let task = URLSession.shared.data(for: request) { [weak self] result in
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
-            case .success(let data):
-                guard let self else {
-                    return
-                }
-                do {
-                    let userResult = try JSONDecoder().decode(UserResult.self, from: data)
-                    self.avatarURL = userResult.profileImage.small
-                    completion(.success(userResult.profileImage.small))
-                    NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": userResult.profileImage.small])
-                } catch {
-                    print("Ошибка декодирования иконки\(error)")
-                    completion(.failure(error))
-                    //NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
-                }
+            case .success(let result):
+                guard let self = self else { return }
+                self.avatarURL = result.profileImage.small
+                completion(.success(result.profileImage.small))
+                
+                NotificationCenter.default
+                    .post(
+                        name: ProfileImageService.didChangeNotification,
+                        object: self,
+                        userInfo: ["URL": self.avatarURL ?? ""]
+                    )
+                
             case .failure(let error):
                 print("[fetchProfileImageURL]: Ошибка запроса: \(error.localizedDescription)")
-                completion(.failure(error))
-                //NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
+                completion(.failure(error)) //
             }
         }
         

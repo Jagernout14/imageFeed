@@ -42,6 +42,8 @@ final class AuthViewController: UIViewController {
             }
         }
     }
+    
+    
 }
 
 // MARK: - WebViewViewControllerDelegate
@@ -62,13 +64,22 @@ extension  AuthViewController: WebViewViewControllerDelegate {
                 
             case .failure(let error):
                 print("Не удалось авторизоваться. Ошибка \(error)")
-                break
+                self.showAuthErrorAlert()
             }
         }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
+    }
+}
+
+extension AuthViewController {
+    func showAuthErrorAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не по плану", message: "Авторизация не удалась", preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
 }
 

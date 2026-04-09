@@ -20,8 +20,6 @@ struct Profile {
     let name: String
     let loginName: String
     let bio: String?
-    
-    
 }
 
 final class ProfileService {
@@ -45,26 +43,20 @@ final class ProfileService {
             return
         }
         
-        let task = urlSession.data(for: request) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    do {
-                        let profileResult = try JSONDecoder().decode(ProfileResult.self, from: data)
-                        
-                        let profile = Profile(username: profileResult.username, name: profileResult.firstName, loginName: "@\(profileResult.username)", bio: profileResult.bio)
-                        self?.profile = profile
-                        completion(.success(profile))
-                    } catch {
-                        completion(.failure(error))
-                    }
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-                self?.task = nil
+        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+            switch result {
+                
+            case .success(let result):
+                let profile = Profile(username: result.username, name: "\(result.firstName) \(result.lastName)", loginName: "@\(result.username)", bio: result.bio)
+                self?.profile = profile
+                completion(.success(profile))
+                
+            case .failure(let error):
+                print("[fetchProfile]: Ошибка запроса: \(error.localizedDescription)")
+                completion(.failure(error))
             }
+            self?.task = nil
         }
-        
         self.task = task
         task.resume()
     }

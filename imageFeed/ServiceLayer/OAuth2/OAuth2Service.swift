@@ -1,4 +1,5 @@
 import Foundation
+import ProgressHUD
 
 enum AuthServiceError: Error {
     case invalidRequest
@@ -10,7 +11,7 @@ final class OAuth2Service {
     static let shared = OAuth2Service()
     
     // MARK: - Private Properties
-    private let tokenStorage = OAuth2TokenStorage()
+    private let tokenStorage = OAuth2TokenStorage.shared
     private let urlSession = URLSession.shared
     
     private var task: URLSessionTask?

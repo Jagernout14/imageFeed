@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -25,10 +26,6 @@ final class ProfileViewController: UIViewController {
         setupDescriptionLabel()
         setupLogoutButton()
         
-        /*if let avatarURL = ProfileImageService.shared.avatarURL,
-         let url = URL(string: avatarURL) {
-         //TODO: Kingfisher
-         } */
         profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self else {
                 return
@@ -48,7 +45,27 @@ final class ProfileViewController: UIViewController {
         else {
             return
         }
-        //TODO: Kingfisher
+        
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?.withTintColor(.lightGray, renderingMode: .alwaysOriginal).withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarPicView.kf.indicatorType = .activity
+        avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [
+            .processor(processor),
+            .scaleFactor(UIScreen.main.scale),
+            .cacheOriginalImage,
+            .forceRefresh
+        ]) { result in
+            switch result {
+            case .success(let value):
+                print(value.image)
+                print(value.cacheType)
+                print(value.source)
+                
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     /*override init(nibName: String?, bundle: Bundle?) {

@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     
@@ -42,8 +43,6 @@ final class AuthViewController: UIViewController {
             }
         }
     }
-    
-    
 }
 
 // MARK: - WebViewViewControllerDelegate
@@ -82,10 +81,3 @@ extension AuthViewController {
         present(alert, animated: true, completion: nil)
     }
 }
-
-
-
-
-
-
-

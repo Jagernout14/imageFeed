@@ -26,6 +26,7 @@ final class ProfileService {
     
     // MARK: - Public Properties
     static let shared = ProfileService()
+    static let didChangeNotification = Notification.Name("ProfileServiceDidChange")
     private init() {}
     
     // MARK: - Private Properties
@@ -49,6 +50,7 @@ final class ProfileService {
             case .success(let result):
                 let profile = Profile(username: result.username, name: "\(result.firstName) \(result.lastName)", loginName: "@\(result.username)", bio: result.bio)
                 self?.profile = profile
+                NotificationCenter.default.post(name: ProfileService.didChangeNotification, object: nil)
                 completion(.success(profile))
                 
             case .failure(let error):

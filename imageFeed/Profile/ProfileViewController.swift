@@ -15,7 +15,6 @@ final class ProfileViewController: UIViewController {
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         if let profile = ProfileService.shared.profile {
             updateProfileDetails(with: profile)
         }
@@ -25,6 +24,7 @@ final class ProfileViewController: UIViewController {
         setupAccountLabel()
         setupDescriptionLabel()
         setupLogoutButton()
+        setupBackground()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self else {
@@ -33,10 +33,20 @@ final class ProfileViewController: UIViewController {
             self.updateAvatar()
         }
         updateAvatar()
+        
+        profileServiceObserver = NotificationCenter.default.addObserver(forName: ProfileService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            guard let self else {
+                return
+            }
+            if let profile = self.profileService.profile {
+                self.updateProfileDetails(with: profile)
+            }
+        }
     }
     
     // MARK: - Observer Construction
     private var profileImageServiceObserver: NSObjectProtocol?
+    private var profileServiceObserver: NSObjectProtocol?
     
     private func updateAvatar() {
         guard
@@ -68,42 +78,6 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    /*override init(nibName: String?, bundle: Bundle?) {
-     super.init(nibName: nibName, bundle: bundle)
-     addObserver()
-     }
-     
-     required init?(coder: NSCoder) {
-     super.init(coder: coder)
-     addObserver()
-     }
-     
-     deinit {
-     removeObserver()
-     }
-     
-     private func addObserver() {
-     NotificationCenter.default.addObserver(self, selector: #selector(updateAvatar(notification:)), name: ProfileImageService.didChangeNotification, object: nil)
-     }
-     
-     private func removeObserver() {
-     NotificationCenter.default.removeObserver(self, name: ProfileImageService.didChangeNotification, object: nil)
-     }
-     
-     @objc
-     private func updateAvatar(notification: Notification) {
-     guard isViewLoaded,
-     let userInfo = notification.userInfo,
-     let profileImageURL = userInfo["URL"] as? String,
-     let url = URL(string: profileImageURL)
-     else {
-     return
-     }
-     
-     //TODO: Kingfisher
-     }
-     */
-    
     // MARK: - Private Methods
     private func updateProfileDetails(with profile: Profile) {
         usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
@@ -124,7 +98,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupNameLabel() {
-        usernameLabel.text = "Екатерина Новикова"
+        //usernameLabel.text = ""
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         usernameLabel.textColor = UIColor(named: "IF_White")
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -134,7 +108,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupAccountLabel() {
-        accountLabel.text = "@ekaterina_nov"
+        //accountLabel.text = ""
         accountLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         accountLabel.textColor = UIColor(named: "IF_Grey")
         accountLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -144,7 +118,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupDescriptionLabel() {
-        descriptionLabel.text = "Hello, world!"
+        //descriptionLabel.text = ""
         descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         descriptionLabel.textColor = UIColor(named: "IF_White")
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -162,5 +136,9 @@ final class ProfileViewController: UIViewController {
         logoutButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
         logoutButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 45).isActive = true
+    }
+    
+    private func setupBackground() {
+        view.backgroundColor = UIColor(named: "IF_Background")
     }
 }

@@ -38,15 +38,13 @@ final class ProfileImageService {
         
         guard let token = OAuth2TokenStorage.shared.token else {
             completion(.failure(NSError(domain: "ProfileImageService", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authorization token missing"])))//exp
-            //NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
             return
         }
         guard let request = makeProfileImageURLRequest(username: username, token: token) else {
             completion(.failure(URLError(.badURL)))
-            //NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self)
-            
             return
         }
+        
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
             case .success(let result):
@@ -60,10 +58,9 @@ final class ProfileImageService {
                         object: self,
                         userInfo: ["URL": self.avatarURL ?? ""]
                     )
-                
             case .failure(let error):
                 print("[fetchProfileImageURL]: Ошибка запроса: \(error.localizedDescription)")
-                completion(.failure(error)) //
+                completion(.failure(error)) 
             }
         }
         

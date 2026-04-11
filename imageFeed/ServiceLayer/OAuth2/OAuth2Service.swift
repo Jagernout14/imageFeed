@@ -1,5 +1,4 @@
 import Foundation
-import ProgressHUD
 
 enum AuthServiceError: Error {
     case invalidRequest
@@ -37,6 +36,7 @@ final class OAuth2Service {
             return
         }
         task?.cancel()
+        lastCode = nil //
         lastCode = code
         guard let request = makeOAuthTokenRequest(code: code)
         else {

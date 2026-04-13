@@ -48,7 +48,7 @@ final class ProfileService {
             switch result {
                 
             case .success(let result):
-                let profile = Profile(username: result.username, name: "\(result.firstName) \(result.lastName)", loginName: "@\(result.username)", bio: result.bio)
+                let profile = Profile(username: result.username, name: "\(result.firstName) \(result.lastName ?? "")", loginName: "@\(result.username)", bio: result.bio)
                 self?.profile = profile
                 NotificationCenter.default.post(name: ProfileService.didChangeNotification, object: nil)
                 completion(.success(profile))
@@ -69,7 +69,7 @@ final class ProfileService {
             return nil
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }

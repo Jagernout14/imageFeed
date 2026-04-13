@@ -56,7 +56,7 @@ final class ProfileViewController: UIViewController {
             return
         }
         
-        let placeholderImage = UIImage(systemName: "person.circle.fill")?.withTintColor(.lightGray, renderingMode: .alwaysOriginal).withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
         
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
         avatarPicView.kf.indicatorType = .activity
@@ -87,7 +87,7 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - UI Settings
     private func setupAvatar() {
-        let avatarPic = UIImage(named: "UserPic")
+        let avatarPic = UIImage(resource: .userPic)
         avatarPicView.image = avatarPic
         avatarPicView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarPicView)
@@ -98,9 +98,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupNameLabel() {
-        //usernameLabel.text = ""
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 23)
-        usernameLabel.textColor = UIColor(named: "IF_White")
+        usernameLabel.textColor = UIColor(resource: .ifWhite)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(usernameLabel)
         usernameLabel.topAnchor.constraint(equalTo: avatarPicView.bottomAnchor, constant: 8).isActive = true
@@ -108,9 +107,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupAccountLabel() {
-        //accountLabel.text = ""
         accountLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        accountLabel.textColor = UIColor(named: "IF_Grey")
+        accountLabel.textColor = UIColor(resource: .ifGrey)
         accountLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(accountLabel)
         accountLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 8).isActive = true
@@ -118,9 +116,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupDescriptionLabel() {
-        //descriptionLabel.text = ""
         descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        descriptionLabel.textColor = UIColor(named: "IF_White")
+        descriptionLabel.textColor = UIColor(resource: .ifWhite)
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(descriptionLabel)
         descriptionLabel.topAnchor.constraint(equalTo: accountLabel.bottomAnchor, constant: 8).isActive = true
@@ -128,8 +125,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupLogoutButton() {
-        logoutButton.setImage(UIImage(named: "Exit_icon"), for: .normal)
-        logoutButton.tintColor = UIColor(named: "IF_Red")
+        logoutButton.setImage(UIImage(resource: .exitIcon), for: .normal)
+        logoutButton.tintColor = UIColor(resource: .ifRed)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoutButton)
         logoutButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
@@ -139,6 +136,15 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupBackground() {
-        view.backgroundColor = UIColor(named: "IF_Background")
+        view.backgroundColor = UIColor(resource: .ifBackground)
+    }
+    
+    enum SystemImage: String {
+        case avatar = "person.circle.fill"
+        
+        func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
+            let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
+            return UIImage(systemName: rawValue)?.withConfiguration(config)
+        }
     }
 }

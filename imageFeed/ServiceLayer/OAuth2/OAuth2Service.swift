@@ -18,7 +18,7 @@ final class OAuth2Service {
     
     private(set) var authToken: String? {
         get {
-            return tokenStorage.token
+            tokenStorage.token
         }
         set {
             tokenStorage.token = newValue
@@ -45,28 +45,26 @@ final class OAuth2Service {
         }
         
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-            DispatchQueue.main.async {
-                UIBlockingProgressHUD.dismiss()
-                guard let self else {
-                    return
-                }
+            UIBlockingProgressHUD.dismiss()
+            guard let self else {
+                return
+            }
+            
+            switch result {
+            case .success(let body):
+                let authToken = body.accessToken
+                self.authToken = authToken
+                completion(.success(authToken))
                 
-                switch result {
-                case .success(let body):
-                    let authToken = body.accessToken
-                    self.authToken = authToken
-                    completion(.success(authToken))
-                    
-                    self.task = nil
-                    self.lastCode = nil
-                    
-                case .failure(let error):
-                    print("[fetchOAuthToken]: Ошибка запроса: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    
-                    self.task = nil
-                    self.lastCode = nil
-                }
+                self.task = nil
+                self.lastCode = nil
+                
+            case .failure(let error):
+                print("[fetchOAuthToken]: Ошибка запроса: \(error.localizedDescription)")
+                completion(.failure(error))
+                
+                self.task = nil
+                self.lastCode = nil
             }
         }
         
@@ -93,7 +91,7 @@ final class OAuth2Service {
         }
         
         var request = URLRequest(url: authTokenUrl)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         
         return request

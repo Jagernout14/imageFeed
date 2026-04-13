@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		2847A7A42F55B04D00323030 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2847A79C2F55A3C100323030 /* WebKit.framework */; };
+		2884450A2F791E1D0051693A /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 288445092F791E1D0051693A /* ProgressHUD */; };
+		28B5FB932F8B861A00581187 /* InMemoryLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 28B5FB922F8B861A00581187 /* InMemoryLogging */; };
+		28B5FB952F8B861A00581187 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 28B5FB942F8B861A00581187 /* Logging */; };
+		28F7662B2F884069007B231B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 28F7662A2F884069007B231B /* Kingfisher */; };
+		28F766302F89865B007B231B /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 28F7662F2F89865B007B231B /* SwiftKeychainWrapper */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +46,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28B5FB952F8B861A00581187 /* Logging in Frameworks */,
+				28F7662B2F884069007B231B /* Kingfisher in Frameworks */,
+				28B5FB932F8B861A00581187 /* InMemoryLogging in Frameworks */,
 				2847A7A42F55B04D00323030 /* WebKit.framework in Frameworks */,
+				28F766302F89865B007B231B /* SwiftKeychainWrapper in Frameworks */,
+				2884450A2F791E1D0051693A /* ProgressHUD in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +95,11 @@
 			);
 			name = imageFeed;
 			packageProductDependencies = (
+				288445092F791E1D0051693A /* ProgressHUD */,
+				28F7662A2F884069007B231B /* Kingfisher */,
+				28F7662F2F89865B007B231B /* SwiftKeychainWrapper */,
+				28B5FB922F8B861A00581187 /* InMemoryLogging */,
+				28B5FB942F8B861A00581187 /* Logging */,
 			);
 			productName = imageFeed;
 			productReference = 2847A77B2F55756000323030 /* imageFeed.app */;
@@ -114,6 +129,12 @@
 			);
 			mainGroup = 285DBD9E2F2E04B500560265;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				288445082F791E1D0051693A /* XCRemoteSwiftPackageReference "ProgressHUD" */,
+				28F766292F884069007B231B /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				28F7662E2F89865B007B231B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+				28B5FB912F8B861A00581187 /* XCRemoteSwiftPackageReference "swift-log" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 285DBD9E2F2E04B500560265;
 			projectDirPath = "";
@@ -159,7 +180,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -194,7 +215,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -268,7 +289,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -326,7 +347,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -358,6 +379,69 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		288445082F791E1D0051693A /* XCRemoteSwiftPackageReference "ProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/relatedcode/ProgressHUD";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 14.1.4;
+			};
+		};
+		28B5FB912F8B861A00581187 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.11.0;
+			};
+		};
+		28F766292F884069007B231B /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.8.1;
+			};
+		};
+		28F7662E2F89865B007B231B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		288445092F791E1D0051693A /* ProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 288445082F791E1D0051693A /* XCRemoteSwiftPackageReference "ProgressHUD" */;
+			productName = ProgressHUD;
+		};
+		28B5FB922F8B861A00581187 /* InMemoryLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28B5FB912F8B861A00581187 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = InMemoryLogging;
+		};
+		28B5FB942F8B861A00581187 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28B5FB912F8B861A00581187 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		28F7662A2F884069007B231B /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28F766292F884069007B231B /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		28F7662F2F89865B007B231B /* SwiftKeychainWrapper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28F7662E2F89865B007B231B /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
+			productName = SwiftKeychainWrapper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 285DBD9F2F2E04B500560265 /* Project object */;
 }

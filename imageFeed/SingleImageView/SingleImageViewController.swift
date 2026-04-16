@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
@@ -7,16 +8,7 @@ final class SingleImageViewController: UIViewController {
     @IBOutlet weak private var scrollView: UIScrollView!
     
     // MARK: - Public Properties
-    var image: UIImage? {
-        didSet {
-            guard isViewLoaded, let image else { return }
-            imageView.image = image
-            imageView.frame.size = image.size
-        }
-    }
-    
-    // MARK: - Private Properties
-    private var hasPerformedInitialScaling = false
+    var imageUrl: URL?
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
@@ -25,17 +17,18 @@ final class SingleImageViewController: UIViewController {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        guard !hasPerformedInitialScaling, let image else { return }
-        rescaleAndCenterImageInScrollView(image: image)
-        hasPerformedInitialScaling = true
+        guard let url = imageUrl else { return }
+        imageView.kf.setImage(with: url) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let value):
+                let image = value.image
+                self.rescaleAndCenterImageInScrollView(image: image)
+            case .failure(let error):
+                print("Ошибка загрузки изображения \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: - IB Actions
@@ -44,7 +37,8 @@ final class SingleImageViewController: UIViewController {
     }
     
     @IBAction func didTapShareButton(_ sender: Any) {
-        guard  let image else { return }
+        guard  let image = imageView.image else { return }
+        
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(share, animated: true, completion: nil)
     }

@@ -42,9 +42,8 @@ final class ProfileImageService {
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             switch result {
             case .success(let result):
-                guard let self else {
-                    return
-                }
+                guard let self else { return }
+                
                 self.avatarURL = result.profileImage.small
                 completion(.success(result.profileImage.small))
                 
@@ -56,7 +55,7 @@ final class ProfileImageService {
                     )
             case .failure(let error):
                 print("[fetchProfileImageURL]: Ошибка запроса: \(error.localizedDescription)")
-                completion(.failure(error)) 
+                completion(.failure(error))
             }
         }
         

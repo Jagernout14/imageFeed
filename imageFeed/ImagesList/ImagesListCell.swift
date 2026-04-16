@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 final class ImagesListCell: UITableViewCell {
     
     // MARK: - IB Outlets
@@ -8,4 +9,10 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Public Properties
     static let reuseIdentifier = "ImagesListCell"
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil
+    }
 }

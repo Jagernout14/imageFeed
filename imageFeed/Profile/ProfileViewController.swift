@@ -27,17 +27,15 @@ final class ProfileViewController: UIViewController {
         setupBackground()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else {
-                return
-            }
+            guard let self else { return }
+            
             self.updateAvatar()
         }
         updateAvatar()
         
         profileServiceObserver = NotificationCenter.default.addObserver(forName: ProfileService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else {
-                return
-            }
+            guard let self else { return }
+            
             if let profile = self.profileService.profile {
                 self.updateProfileDetails(with: profile)
             }
@@ -52,9 +50,7 @@ final class ProfileViewController: UIViewController {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
-        else {
-            return
-        }
+        else { return }
         
         let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
         

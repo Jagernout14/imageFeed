@@ -60,9 +60,7 @@ final class ImagesListService {
             return
         }
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
-            guard let self else {
-                return
-            }
+            guard let self else { return }
             switch result {
             case .success(let photoResults):
                 let newPhotos = photoResults.map { result in
@@ -93,7 +91,6 @@ final class ImagesListService {
         }
         task.resume()
     }
-    
     
     private func makePhotosUrlRequest(page: Int, token: String) -> URLRequest? {
         var components = URLComponents()

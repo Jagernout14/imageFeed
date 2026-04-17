@@ -44,10 +44,13 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gk2-sR-ozt" userLabel="Like Button">
+                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" highlighted="YES" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gk2-sR-ozt" userLabel="Like Button">
                                                     <rect key="frame" x="323" y="15" width="44" height="44"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="LikeButtonActive_icon"/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked" destination="ff0-P5-uQj" eventType="touchUpInside" id="gDA-Tq-2jx"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" name="Background"/>

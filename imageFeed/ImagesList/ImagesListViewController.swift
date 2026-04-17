@@ -28,6 +28,7 @@ final class ImagesListViewController: UIViewController {
             forName: ImagesListService.didChangeNotification, object: nil, queue: .main, using: { [weak self] _ in
                 self?.updateTableViewAnimated()
             })
+        imagesListService.fetchPhotosNextPage()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -50,17 +51,6 @@ final class ImagesListViewController: UIViewController {
     private func setupTableView() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
-    /* func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-     guard let image = UIImage(named: photosName[indexPath.row]) else { return }
-     
-     cell.cellImage.image = image
-     cell.dateLabel.text = dateFormatter.string(from: Date())
-     
-     let isLiked = indexPath.row % 2 == 0
-     let likeImage = isLiked ? UIImage(named: "LikeButtonActive_icon") : UIImage(named: "LikeButtonInactive_icon")
-     cell.likeButton.setImage(likeImage, for: .normal)
-     } */
     
     private func updateTableViewAnimated() {
         let oldCount = photos.count
@@ -85,6 +75,7 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let photo = photos[indexPath.row] //указываю откуда брать изображения
+        print(photo.id, photo.isLiked)
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else { //настраиваю ячейку
             return UITableViewCell()
         }
@@ -103,6 +94,7 @@ extension ImagesListViewController: UITableViewDataSource {
             }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
+        cell.delegate = self
         
         cell.likeButton.isSelected = photo.isLiked // лайки
         if let date = photo.createdAt {
@@ -142,6 +134,30 @@ extension ImagesListViewController: UITableViewDelegate {
             imagesListService.fetchPhotosNextPage()
         } else {
             return
+        }
+    }
+}
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLikeButton(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let photo = photos[indexPath.row]
+        UIBlockingProgressHUD.show()
+        imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            guard let self else { return }
+            print("SERVER RESULT:", result) // лог
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    UIBlockingProgressHUD.dismiss()
+                    self.photos[indexPath.row].isLiked.toggle()
+                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                case .failure(let error):
+                    UIBlockingProgressHUD.dismiss()
+                    //TODO: Показать ошибку с помощью UIAkertController
+                }
+            }
         }
     }
 }

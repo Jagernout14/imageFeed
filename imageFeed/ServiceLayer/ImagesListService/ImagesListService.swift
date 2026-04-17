@@ -6,7 +6,7 @@ struct Photo {
     let welcomeDescription: String?
     let thumbImageURL: String
     let largeImageURL: String
-    let isLiked: Bool
+    var isLiked: Bool
 }
 
 struct PhotoResult: Codable {
@@ -16,7 +16,7 @@ struct PhotoResult: Codable {
     let createdAt: String?
     let description: String?
     let urls: UrlResults
-    let isLiked: Bool
+    var isLiked: Bool
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -92,6 +92,30 @@ final class ImagesListService {
         task.resume()
     }
     
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let token = OAuth2TokenStorage.shared.token else {
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else {
+            completion(.failure(NetworkError.invalidRequest))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = isLike ? HTTPMethod.post.rawValue : HTTPMethod.delete.rawValue
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.data(for: request) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
     private func makePhotosUrlRequest(page: Int, token: String) -> URLRequest? {
         var components = URLComponents()
         components.scheme = "https"
@@ -109,5 +133,13 @@ final class ImagesListService {
         request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
+    }
+}
+
+extension Array {
+    func withReplaced(itemAt index: Int, newValue: Element) -> [Element] {
+        var copy = self
+        copy[index] = newValue
+        return copy
     }
 }

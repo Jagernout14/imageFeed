@@ -92,7 +92,6 @@ extension ImagesListViewController: UITableViewDataSource {
                   currentIndexPath == indexPath else {
                 return
             }
-            tableView.reloadRows(at: [indexPath], with: .automatic)
         }
         cell.delegate = self
         
@@ -103,7 +102,6 @@ extension ImagesListViewController: UITableViewDataSource {
             cell.dateLabel.text = "" // если дата не пришла
         }
         return cell //возвращаю ячейку
-        
     }
 }
 
@@ -145,14 +143,13 @@ extension ImagesListViewController: ImagesListCellDelegate {
         UIBlockingProgressHUD.show()
         imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
             guard let self else { return }
-            print("SERVER RESULT:", result) // лог
             
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    UIBlockingProgressHUD.dismiss()
                     self.photos[indexPath.row].isLiked.toggle()
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                    UIBlockingProgressHUD.dismiss()
                 case .failure(let error):
                     UIBlockingProgressHUD.dismiss()
                     //TODO: Показать ошибку с помощью UIAkertController

@@ -1,4 +1,5 @@
 import UIKit
+
 struct Photo {
     let id: String
     let size: CGSize
@@ -38,13 +39,20 @@ struct UrlResults: Codable {
 }
 
 final class ImagesListService {
-    private(set) var photos: [Photo] = []
-    private var isLoading = false
     
-    private var lastLoadedPage: Int?
-    
+    // MARK: - Public Properties
+    static let shared = ImagesListService()
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
+    // MARK: - Private Properties
+    private(set) var photos: [Photo] = []
+    private var isLoading = false
+    private var lastLoadedPage: Int?
+    
+    // MARK: - Initializers
+    private init() {}
+    
+    // MARK: - Public Methods
     func fetchPhotosNextPage() {
         if isLoading {
             return
@@ -125,6 +133,13 @@ final class ImagesListService {
         }
     }
     
+    func logoutImagesList() {
+        photos = []
+        isLoading = false
+        lastLoadedPage = nil
+    }
+    
+    // MARK: - Private Methods
     private func makePhotosUrlRequest(page: Int, token: String) -> URLRequest? {
         var components = URLComponents()
         components.scheme = "https"

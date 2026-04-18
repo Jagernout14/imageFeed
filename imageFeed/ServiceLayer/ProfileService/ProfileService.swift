@@ -63,6 +63,12 @@ final class ProfileService {
         task.resume()
     }
     
+    func logoutProfile() {
+        task?.cancel()
+        task = nil
+        profile = nil
+    }
+    
     // MARK: - Private Methods
     private func makeProfileURLRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/me") else {

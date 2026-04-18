@@ -3,6 +3,16 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - Public Properties
+    enum SystemImage: String {
+        case avatar = "person.circle.fill"
+        
+        func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
+            let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
+            return UIImage(systemName: rawValue)?.withConfiguration(config)
+        }
+    }
+    
     // MARK: - Private Properties
     private let avatarPicView = UIImageView()
     private let usernameLabel = UILabel()
@@ -75,6 +85,14 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Private Methods
+    @objc private func didTapLogoutButton() {
+        ProfileLogoutService.shared.logout()
+        
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let delegate = scene.delegate as? SceneDelegate else { return }
+        delegate.switchToMain()
+    }
+    
     private func updateProfileDetails(with profile: Profile) {
         usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
         accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
@@ -129,18 +147,10 @@ final class ProfileViewController: UIViewController {
         logoutButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16).isActive = true
         logoutButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 45).isActive = true
+        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
     }
     
     private func setupBackground() {
         view.backgroundColor = UIColor(resource: .ifBackground)
-    }
-    
-    enum SystemImage: String {
-        case avatar = "person.circle.fill"
-        
-        func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
-            let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
-            return UIImage(systemName: rawValue)?.withConfiguration(config)
-        }
     }
 }

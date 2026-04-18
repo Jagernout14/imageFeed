@@ -63,6 +63,12 @@ final class ProfileImageService {
         task.resume()
     }
     
+    func logoutProfileImage() {
+        task?.cancel()
+        task = nil
+        avatarURL = nil
+    }
+    
     // MARK: - Private Methods
     private func makeProfileImageURLRequest(username: String, token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {

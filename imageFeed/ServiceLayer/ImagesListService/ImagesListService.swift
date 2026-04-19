@@ -48,6 +48,8 @@ final class ImagesListService {
     private(set) var photos: [Photo] = []
     private var isLoading = false
     private var lastLoadedPage: Int?
+    private let isoFormatter = ISO8601DateFormatter()
+    
     
     // MARK: - Initializers
     private init() {}
@@ -71,11 +73,15 @@ final class ImagesListService {
             guard let self else { return }
             switch result {
             case .success(let photoResults):
+                let isoFormatter = self.isoFormatter
                 let newPhotos = photoResults.map { result in
-                    Photo(
+                    let date = result.createdAt.flatMap {
+                        isoFormatter.date(from: $0)
+                    }
+                    return Photo(
                         id: result.id,
                         size: CGSize(width: result.width, height: result.height),
-                        createdAt: nil,
+                        createdAt: date, // fix dat
                         welcomeDescription: result.description,
                         thumbImageURL: result.urls.thumb,
                         largeImageURL: result.urls.full,

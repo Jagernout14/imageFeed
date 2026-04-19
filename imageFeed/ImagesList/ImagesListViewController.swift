@@ -9,7 +9,7 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Private Properties
     private let showSingleImageIdentifier = "ShowSingleImage"
-    private let imagesListService = ImagesListService()
+    private let imagesListService = ImagesListService.shared
     private var photos: [Photo] = []
     
     private lazy var dateFormatter: DateFormatter = {
@@ -79,8 +79,10 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else { //настраиваю ячейку
             return UITableViewCell()
         }
+        cell.showAnimation()
         guard let url = URL(string: photo.thumbImageURL) else {
             cell.cellImage.image = UIImage(resource: .cellStubIcon)
+            cell.hideAnimation()
             return cell
         }
         cell.cellImage.kf.indicatorType = .activity
@@ -88,6 +90,7 @@ extension ImagesListViewController: UITableViewDataSource {
             with: url,
             placeholder: UIImage(resource: .cellStubIcon)
         ) { result in
+            cell.hideAnimation()
             guard let currentIndexPath = tableView.indexPath(for: cell),
                   currentIndexPath == indexPath else {
                 return
@@ -151,9 +154,11 @@ extension ImagesListViewController: ImagesListCellDelegate {
                     self.photos[indexPath.row].isLiked.toggle()
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
                     UIBlockingProgressHUD.dismiss()
-                case .failure(let error):
+                case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    //TODO: Показать ошибку с помощью UIAkertController
+                    let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+                    self.present(alert, animated: true)
                 }
             }
         }

@@ -19,6 +19,7 @@ final class ProfileViewController: UIViewController {
     private let accountLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let logoutButton = UIButton(type: .system)
+    private var animationLayers = Set<CALayer>()
     
     private let profileService = ProfileService.shared
     
@@ -35,6 +36,7 @@ final class ProfileViewController: UIViewController {
         setupDescriptionLabel()
         setupLogoutButton()
         setupBackground()
+        setupAnimations()
         
         profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self else { return }
@@ -50,6 +52,17 @@ final class ProfileViewController: UIViewController {
                 self.updateProfileDetails(with: profile)
             }
         }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        updateGradientFrames()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        removeGradients()
     }
     
     // MARK: - Observer Construction
@@ -74,6 +87,7 @@ final class ProfileViewController: UIViewController {
         ]) { result in
             switch result {
             case .success(let value):
+                self.removeGradients()
                 print(value.image)
                 print(value.cacheType)
                 print(value.source)
@@ -97,6 +111,7 @@ final class ProfileViewController: UIViewController {
         usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
         accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
         descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
+        removeGradients()
     }
     
     // MARK: - UI Settings
@@ -152,5 +167,59 @@ final class ProfileViewController: UIViewController {
     
     private func setupBackground() {
         view.backgroundColor = UIColor(resource: .ifBackground)
+    }
+    
+    private func makeAnimatedGradient(frame: CGRect, cornerRadius: CGFloat) -> CAGradientLayer {
+        let gradient = CAGradientLayer()
+        gradient.frame = frame
+        
+        gradient.locations = [0, 0.1, 0.3]
+        gradient.colors = [
+            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
+            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+        ]
+        
+        gradient.startPoint = CGPoint(x: 0, y: 0.5)
+        gradient.endPoint = CGPoint(x: 1, y: 0.5)
+        
+        gradient.cornerRadius = cornerRadius
+        gradient.masksToBounds = true
+        
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.duration = 1.0
+        animation.fromValue = [0, 0.1, 0.3]
+        animation.toValue = [0, 0.8, 1]
+        animation.repeatCount = .infinity
+        
+        gradient.add(animation, forKey: "gradient")
+        
+        return gradient
+    }
+    
+    private func addGradient(to view: UIView, cornerRadius: CGFloat) {
+        let gradient = makeAnimatedGradient(frame: view.bounds, cornerRadius: cornerRadius)
+        view.layer.addSublayer(gradient)
+        animationLayers.insert(gradient)
+    }
+    
+    private func removeGradients() {
+        animationLayers.forEach {
+            $0.removeFromSuperlayer()
+        }
+        animationLayers.removeAll()
+    }
+    
+    private func updateGradientFrames() {
+        for layer in animationLayers {
+            layer.frame = layer.superlayer?.bounds ?? .zero
+        }
+    }
+    
+    private func setupAnimations() {
+        addGradient(to: avatarPicView, cornerRadius: 35)
+        addGradient(to: usernameLabel, cornerRadius: 0)
+        addGradient(to: accountLabel, cornerRadius: 0)
+        addGradient(to: descriptionLabel, cornerRadius: 0)
     }
 }

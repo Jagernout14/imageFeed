@@ -84,7 +84,6 @@ final class SingleImageViewController: UIViewController {
             self?.loadImage()
         })
         present(alert, animated: true)
-        
     }
 }
 

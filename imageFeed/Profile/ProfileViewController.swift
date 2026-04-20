@@ -14,11 +14,11 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Private Properties
-    private let avatarPicView = UIImageView()
-    private let usernameLabel = UILabel()
-    private let accountLabel = UILabel()
-    private let descriptionLabel = UILabel()
-    private let logoutButton = UIButton(type: .system)
+    private lazy var avatarPicView = UIImageView()
+    private lazy var usernameLabel = UILabel()
+    private lazy var accountLabel = UILabel()
+    private lazy var descriptionLabel = UILabel()
+    private lazy var logoutButton = UIButton(type: .system)
     private var animationLayers = Set<CALayer>()
     
     private let profileService = ProfileService.shared
@@ -100,8 +100,16 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Private Methods
     @objc private func didTapLogoutButton() {
+        let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Да", style: .destructive) { _ in
+            self.performLogout()
+        })
+        present(alert, animated: true)
+    }
+    
+    private func performLogout() {
         ProfileLogoutService.shared.logout()
-        
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let delegate = scene.delegate as? SceneDelegate else { return }
         delegate.switchToMain()

@@ -70,7 +70,7 @@ final class ImagesListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+        photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -146,14 +146,22 @@ extension ImagesListViewController: ImagesListCellDelegate {
         let photo = photos[indexPath.row]
         UIBlockingProgressHUD.show()
         imagesListService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                UIBlockingProgressHUD.dismiss()
+                return
+            }
             
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.photos[indexPath.row].isLiked.toggle()
-                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                    if let index = self.photos.firstIndex(where: { $0.id == photo.id}) {
+                        let currentPhoto = self.photos[index]
+                        let newPhoto = currentPhoto.toggleLike()
+                        self.photos[index] = newPhoto
+                        self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                    }
                     UIBlockingProgressHUD.dismiss()
+                    
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
                     let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так", preferredStyle: .alert)

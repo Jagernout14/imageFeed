@@ -45,7 +45,7 @@ final class ImagesListCell: UITableViewCell {
     private var gradientLayer: CAGradientLayer?
     
     func showAnimation() {
-        if gradientLayer != nil { return }
+        guard gradientLayer == nil else { return }
         let gradient = CAGradientLayer()
         gradient.frame = cellImage.bounds
         gradient.colors = [

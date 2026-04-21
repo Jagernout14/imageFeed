@@ -44,15 +44,17 @@ final class ProfileImageService {
             case .success(let result):
                 guard let self else { return }
                 
-                self.avatarURL = result.profileImage.small
-                completion(.success(result.profileImage.small))
-                
-                NotificationCenter.default
-                    .post(
-                        name: ProfileImageService.didChangeNotification,
-                        object: self,
-                        userInfo: ["URL": self.avatarURL ?? ""]
-                    )
+                DispatchQueue.main.async {
+                    self.avatarURL = result.profileImage.small
+                    completion(.success(result.profileImage.small))
+                    
+                    NotificationCenter.default
+                        .post(
+                            name: ProfileImageService.didChangeNotification,
+                            object: self,
+                            userInfo: ["URL": self.avatarURL ?? ""]
+                        )
+                }
             case .failure(let error):
                 print("[fetchProfileImageURL]: Ошибка запроса: \(error.localizedDescription)")
                 completion(.failure(error))

@@ -100,8 +100,9 @@ final class SplashViewController: UIViewController {
         }
         
         authViewController.delegate = self
-        authViewController.modalPresentationStyle = .fullScreen
-        present(authViewController, animated: true)
+        let navigationController = UINavigationController(rootViewController: authViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true)
     }
 }
 
@@ -113,6 +114,5 @@ extension SplashViewController: AuthViewControllerDelegate {
         
         isProfileIsLoaded = true
         fetchProfile(token: token)
-        switchToTabBarController()
     }
 }

@@ -27,11 +27,7 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        
-        guard !isProfileIsLoaded else {
-            return
-        }
+        guard !isProfileIsLoaded else { return }
         
         guard let token = storage.token else {
             presentAuthViewController()
@@ -64,10 +60,7 @@ final class SplashViewController: UIViewController {
         UIBlockingProgressHUD.show()
         profileService.fetchProfile(token) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
-            
-            guard let self else {
-                return
-            }
+            guard let self else { return }
             
             switch result {
             case .success(let profile):
@@ -116,9 +109,8 @@ final class SplashViewController: UIViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
-        guard let token = storage.token else {
-            return
-        }
+        guard let token = storage.token else { return }
+        
         isProfileIsLoaded = true
         fetchProfile(token: token)
         switchToTabBarController()

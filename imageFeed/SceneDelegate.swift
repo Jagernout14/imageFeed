@@ -13,4 +13,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = SplashViewController()
         window?.makeKeyAndVisible()
     }
+    
+    func switchToMain() {
+        guard let window = self.window else { return }
+        let mainViewController = SplashViewController()
+        window.rootViewController = mainViewController
+        window.makeKeyAndVisible()
+        
+    }
 }

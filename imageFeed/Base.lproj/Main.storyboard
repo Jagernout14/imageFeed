@@ -48,6 +48,9 @@
                                                     <rect key="frame" x="323" y="15" width="44" height="44"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="LikeButtonActive_icon"/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked" destination="ff0-P5-uQj" eventType="touchUpInside" id="gDA-Tq-2jx"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" name="Background"/>

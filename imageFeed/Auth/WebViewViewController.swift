@@ -28,9 +28,8 @@ final class WebViewViewController: UIViewController {
         super.viewDidLoad()
         
         estimatedProgressObservation = webView.observe(\.estimatedProgress, options: [], changeHandler: { [weak self] _, _ in
-            guard let self else {
-                return
-            }
+            guard let self else { return }
+            
             self.updateProgress()
         })
         
@@ -51,9 +50,7 @@ final class WebViewViewController: UIViewController {
             URLQueryItem(name: "scope", value: Constants.accessScope)
         ]
         
-        guard let url = urlComponents.url else {
-            return
-        }
+        guard let url = urlComponents.url else { return }
         
         let request = URLRequest(url: url)
         webView.load(request)

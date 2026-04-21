@@ -4,9 +4,6 @@ final class OAuth2TokenStorage {
     
     // MARK: - Public Properties
     static let shared = OAuth2TokenStorage()
-    private init() {}
-    
-    private let tokenKey = "token"
     
     var token: String? {
         get {
@@ -20,4 +17,9 @@ final class OAuth2TokenStorage {
             }
         }
     }
+    // MARK: - Private Properties
+    private let tokenKey = "token"
+    
+    // MARK: - Initializers
+    private init() {}
 }

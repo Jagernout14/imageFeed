@@ -5,7 +5,7 @@ final class AuthHelperSpy: AuthHelperProtocol {
     
     var authRequestStub: URLRequest?
     func authRequest() -> URLRequest? {
-        authRequestStub
+        return authRequestStub
     }
     func code(from url: URL) -> String? {
         return nil

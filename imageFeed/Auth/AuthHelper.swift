@@ -12,20 +12,12 @@ final class AuthHelper: AuthHelperProtocol {
     let configuration: AuthConfiguration
     
     // MARK: - Initializers
-    init(configuration: AuthConfiguration = .standart) {
+    init(configuration: AuthConfiguration = .standard) {
         self.configuration = configuration
     }
     
-    func authRequest() -> URLRequest? {
-        guard let url = AuthURL() else {
-            return nil
-        }
-        
-        return URLRequest(url: url)
-    }
-    
     // MARK: - Public Methods
-    func AuthURL() -> URL? {
+    func authURL() -> URL? {
         guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             return nil
         }
@@ -38,6 +30,14 @@ final class AuthHelper: AuthHelperProtocol {
         ]
         
         return urlComponents.url
+    }
+    
+    func authRequest() -> URLRequest? {
+        guard let url = authURL() else {
+            return nil
+        }
+        
+        return URLRequest(url: url)
     }
     
     func code(from url: URL) -> String? {

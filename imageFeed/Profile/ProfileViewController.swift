@@ -1,17 +1,24 @@
 import UIKit
 import Kingfisher
 
+protocol ProfileViewControllerProtocol: AnyObject {
+    func display(profile: ProfileViewModel)
+    func displayAvatar(urlString: String)
+    func showLogoutFlow()
+}
+
 final class ProfileViewController: UIViewController {
     
     // MARK: - Public Properties
     enum SystemImage: String {
         case avatar = "person.circle.fill"
-        
         func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
             let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
             return UIImage(systemName: rawValue)?.withConfiguration(config)
         }
     }
+    
+    var presenter: ProfileViewPresenterProtocol?
     
     // MARK: - Private Properties
     private lazy var avatarPicView = UIImageView()
@@ -21,43 +28,21 @@ final class ProfileViewController: UIViewController {
     private lazy var logoutButton = UIButton(type: .system)
     private var animationLayers = Set<CALayer>()
     
-    private let profileService = ProfileService.shared
-    
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let profile = ProfileService.shared.profile {
-            updateProfileDetails(with: profile)
-        }
-        
-        setupAvatar()
-        setupNameLabel()
-        setupAccountLabel()
-        setupDescriptionLabel()
-        setupLogoutButton()
-        setupBackground()
-        setupAnimations()
-        
-        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else { return }
-            
-            self.updateAvatar()
-        }
-        updateAvatar()
-        
-        profileServiceObserver = NotificationCenter.default.addObserver(forName: ProfileService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else { return }
-            
-            if let profile = self.profileService.profile {
-                self.updateProfileDetails(with: profile)
-            }
-        }
+        presenter?.view = self
+        setupUI()
+        presenter?.viewDidLoad()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         updateGradientFrames()
+        if animationLayers.isEmpty {
+            setupAnimations()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -65,61 +50,23 @@ final class ProfileViewController: UIViewController {
         removeGradients()
     }
     
-    // MARK: - Observer Construction
-    private var profileImageServiceObserver: NSObjectProtocol?
-    private var profileServiceObserver: NSObjectProtocol?
-    
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        
-        let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-        
-        let processor = RoundCornerImageProcessor(cornerRadius: 35)
-        avatarPicView.kf.indicatorType = .activity
-        avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [
-            .processor(processor),
-            .scaleFactor(UIScreen.main.scale),
-            .cacheOriginalImage,
-            .forceRefresh
-        ]) { result in
-            switch result {
-            case .success(let value):
-                self.removeGradients()
-                print(value.image)
-                print(value.cacheType)
-                print(value.source)
-                
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
     // MARK: - Private Methods
     @objc private func didTapLogoutButton() {
         let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Да", style: .default) { _ in
-            self.performLogout()
-        })
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            self?.presenter?.performLogout()        })
         present(alert, animated: true)
     }
     
-    private func performLogout() {
-        ProfileLogoutService.shared.logout()
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let delegate = scene.delegate as? SceneDelegate else { return }
-        delegate.switchToMain()
-    }
-    
-    private func updateProfileDetails(with profile: Profile) {
-        usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
-        accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
-        descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
-        removeGradients()
+    private func setupUI() {
+        setupAvatar()
+        setupNameLabel()
+        setupAccountLabel()
+        setupDescriptionLabel()
+        setupLogoutButton()
+        setupBackground()
+        setupAnimations()
     }
     
     // MARK: - UI Settings
@@ -229,5 +176,39 @@ final class ProfileViewController: UIViewController {
         addGradient(to: usernameLabel, cornerRadius: 0)
         addGradient(to: accountLabel, cornerRadius: 0)
         addGradient(to: descriptionLabel, cornerRadius: 0)
+    }
+}
+
+extension ProfileViewController: ProfileViewControllerProtocol {
+    
+    func display(profile: ProfileViewModel) {
+        usernameLabel.text = profile.name
+        accountLabel.text = profile.login
+        descriptionLabel.text = profile.bio
+        removeGradients()
+    }
+    
+    func displayAvatar(urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        
+        let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+        
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarPicView.kf.indicatorType = .activity
+        avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [
+            .processor(processor),
+            .scaleFactor(UIScreen.main.scale),
+            .cacheOriginalImage,
+            .forceRefresh
+        ]
+        )
+        removeGradients()
+    }
+    
+    func showLogoutFlow() {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let delegate = scene.delegate as? SceneDelegate else { return }
+        
+        delegate.switchToMain()
     }
 }

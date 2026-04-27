@@ -1,12 +1,13 @@
 import Foundation
 
-protocol ProfileViewPresenterProtocol: AnyObject {
+protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
-    func performLogout()
+    func didTapLogout()
+    func didConfirmLogout()
 }
 
-final class ProfileViewPresenter: ProfileViewPresenterProtocol {
+final class ProfilePresenter: ProfilePresenterProtocol {
     
     // MARK: - Public Properties
     weak var view: ProfileViewControllerProtocol?
@@ -18,6 +19,13 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
     private var profileServiceObserver: NSObjectProtocol?
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    private let logoutService: ProfileLogoutService
+    
+    // MARK: - Initializers
+    init(logoutService: ProfileLogoutService = .shared) {
+        self.logoutService = logoutService
+    }
+    
     // MARK: - Public Methods
     func present(profile: Profile) {
         let viewModel = ProfileViewModel(
@@ -25,12 +33,15 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
             login: profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName,
             bio: profile.bio?.isEmpty == false ? profile.bio ?? "" : "Профиль не заполнен"
         )
-        
         view?.display(profile: viewModel)
     }
     
-    func performLogout() {
-        ProfileLogoutService.shared.logout()
+    func didTapLogout() {
+        view?.showLogoutConfirmation()
+    }
+    
+    func didConfirmLogout() {
+        logoutService.logout()
         view?.showLogoutFlow()
     }
     

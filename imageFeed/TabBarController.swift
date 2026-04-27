@@ -2,18 +2,37 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func viewDidLoad() {
+        super.viewDidLoad()
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
-        let imagesListViewController = storyboard.instantiateViewController(withIdentifier: "ImagesListViewController")
-        let profileViewController = ProfileViewController()
-        let presenter = ProfileViewPresenter()
+        // MARK: - Images List
+        let imagesListVC = storyboard.instantiateViewController(
+            withIdentifier: "ImagesListViewController"
+        ) as! ImagesListViewController
         
-        profileViewController.presenter = presenter
-        presenter.view = profileViewController
+        let imagesPresenter = ImagesListPresenter()
+        imagesListVC.presenter = imagesPresenter
+        imagesPresenter.view = imagesListVC
         
-        profileViewController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "tabProfileActive_icon"), selectedImage: nil)
-        self.viewControllers = [imagesListViewController, profileViewController]
+        imagesListVC.tabBarItem = UITabBarItem(
+            title: "",
+            image: UIImage(resource: .tabEditorialActiveIcon),
+            selectedImage: nil
+        )
+        
+        // MARK: - Profile
+        let profileVC = ProfileViewController()
+        let profilePresenter = ProfilePresenter()
+        
+        profileVC.presenter = profilePresenter
+        profilePresenter.view = profileVC
+        profileVC.tabBarItem = UITabBarItem(
+            title: "",
+            image: UIImage(resource: .tabProfileActiveIcon),
+            selectedImage: nil
+        )
+        
+        viewControllers = [imagesListVC, profileVC]
     }
 }

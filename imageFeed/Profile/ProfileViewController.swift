@@ -4,12 +4,15 @@ import Kingfisher
 protocol ProfileViewControllerProtocol: AnyObject {
     func display(profile: ProfileViewModel)
     func displayAvatar(urlString: String)
+    func showLogoutConfirmation()
     func showLogoutFlow()
 }
 
 final class ProfileViewController: UIViewController {
     
     // MARK: - Public Properties
+    var presenter: ProfilePresenterProtocol?
+    
     enum SystemImage: String {
         case avatar = "person.circle.fill"
         func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
@@ -18,31 +21,29 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    var presenter: ProfileViewPresenterProtocol?
-    
     // MARK: - Private Properties
     private lazy var avatarPicView = UIImageView()
     private lazy var usernameLabel = UILabel()
     private lazy var accountLabel = UILabel()
     private lazy var descriptionLabel = UILabel()
     private lazy var logoutButton = UIButton(type: .system)
+    
     private var animationLayers = Set<CALayer>()
+    private var isProfileLoaded = false
+    private var isAvatarLoaded = false
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.view = self
         setupUI()
+        setupAnimations()
         presenter?.viewDidLoad()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         updateGradientFrames()
-        if animationLayers.isEmpty {
-            setupAnimations()
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -50,13 +51,25 @@ final class ProfileViewController: UIViewController {
         removeGradients()
     }
     
-    // MARK: - Private Methods
-    @objc private func didTapLogoutButton() {
-        let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+    // MARK: - Public Methods
+    func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: "Пока, Пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
         alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
         alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] _ in
-            self?.presenter?.performLogout()        })
+            self?.presenter?.didConfirmLogout()
+        })
+        
         present(alert, animated: true)
+    }
+    
+    // MARK: - Private Methods
+    @objc private func didTapLogoutButton() {
+        presenter?.didTapLogout()
     }
     
     private func setupUI() {
@@ -137,7 +150,6 @@ final class ProfileViewController: UIViewController {
         
         gradient.startPoint = CGPoint(x: 0, y: 0.5)
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
-        
         gradient.cornerRadius = cornerRadius
         gradient.masksToBounds = true
         
@@ -171,6 +183,18 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private func updateLoadingState() {
+        let isLoading = !(isProfileLoaded && isAvatarLoaded)
+        
+        if isLoading {
+            if animationLayers.isEmpty {
+                setupAnimations()
+            }
+        } else {
+            removeGradients()
+        }
+    }
+    
     private func setupAnimations() {
         addGradient(to: avatarPicView, cornerRadius: 35)
         addGradient(to: usernameLabel, cornerRadius: 0)
@@ -179,18 +203,20 @@ final class ProfileViewController: UIViewController {
     }
 }
 
+//MARK: - ProfileViewControllerProtocol
 extension ProfileViewController: ProfileViewControllerProtocol {
     
     func display(profile: ProfileViewModel) {
         usernameLabel.text = profile.name
         accountLabel.text = profile.login
         descriptionLabel.text = profile.bio
-        removeGradients()
+        
+        isProfileLoaded = true
+        updateLoadingState()
     }
     
     func displayAvatar(urlString: String) {
         guard let url = URL(string: urlString) else { return }
-        
         let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
         
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
@@ -201,8 +227,10 @@ extension ProfileViewController: ProfileViewControllerProtocol {
             .cacheOriginalImage,
             .forceRefresh
         ]
-        )
-        removeGradients()
+        ) { [weak self] _ in
+            self?.isAvatarLoaded = true
+            self?.updateLoadingState()
+        }
     }
     
     func showLogoutFlow() {

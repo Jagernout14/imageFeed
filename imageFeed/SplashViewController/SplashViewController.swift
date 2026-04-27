@@ -17,6 +17,8 @@ final class SplashViewController: UIViewController {
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthScreen"
     private let profileService = ProfileService.shared
     private var isProfileIsLoaded = false
+    private var isPresentingAuth = false
+    private var isAuthFlowFinished = false
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
@@ -27,7 +29,8 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard !isProfileIsLoaded else { return }
+        guard !isProfileIsLoaded,
+              !isAuthFlowFinished else { return }
         
         guard let token = storage.token else {
             presentAuthViewController()
@@ -45,7 +48,9 @@ final class SplashViewController: UIViewController {
     
     // MARK: - Private Methods
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else {
+        guard let scene = view.window?.windowScene,
+              let sceneDelegate = scene.delegate as? SceneDelegate,
+              let window = sceneDelegate.window else {
             assertionFailure("Invalid window configuration")
             return
         }
@@ -54,6 +59,7 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
         
         window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
     }
     
     private func fetchProfile(token: String) {
@@ -66,8 +72,10 @@ final class SplashViewController: UIViewController {
             case .success(let profile):
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
                 self.switchToTabBarController()
+                
             case .failure(let error):
                 print("Error \(error)")
+                self.isProfileIsLoaded = false
                 break
             }
         }
@@ -92,6 +100,8 @@ final class SplashViewController: UIViewController {
     
     //MARK: Segue to AuthViewController
     private func presentAuthViewController() {
+        guard !isPresentingAuth else { return }
+        isPresentingAuth = true
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
@@ -102,17 +112,23 @@ final class SplashViewController: UIViewController {
         authViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: authViewController)
         navigationController.modalPresentationStyle = .fullScreen
-        present(navigationController, animated: true)
+        
+        present(navigationController, animated: true) { [weak self] in
+            self?.isPresentingAuth = false
+        }
     }
 }
 
 //MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
+        isAuthFlowFinished = true
         vc.dismiss(animated: true)
-        guard let token = storage.token else { return }
         
-        isProfileIsLoaded = true
-        fetchProfile(token: token)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            guard let token = self.storage.token else { return }
+            self.isProfileIsLoaded = true
+            self.fetchProfile(token: token)
+        }
     }
 }

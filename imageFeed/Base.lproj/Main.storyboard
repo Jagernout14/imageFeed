@@ -120,7 +120,7 @@
         <!--Single Image View Controller-->
         <scene sceneID="k0L-BI-fJS">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="06a-cz-W3Q" customClass="SingleImageViewController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SingleImageViewController" modalPresentationStyle="fullScreen" id="06a-cz-W3Q" customClass="SingleImageViewController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DXZ-kZ-Dx0">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

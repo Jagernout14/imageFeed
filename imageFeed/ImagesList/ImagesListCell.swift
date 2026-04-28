@@ -2,6 +2,7 @@ import UIKit
 import Kingfisher
 
 protocol ImagesListCellDelegate: AnyObject {
+    
     func imageListCellDidTapLikeButton(_ cell: ImagesListCell)
 }
 
@@ -35,7 +36,7 @@ final class ImagesListCell: UITableViewCell {
         likeButton.setImage(UIImage(resource: .likeButtonInactiveIcon), for: .normal)
         likeButton.setImage(UIImage(resource: .likeButtonActiveIcon), for: .selected)
         likeButton.accessibilityIdentifier = "likeButton"
-
+        
     }
     
     //MARK: - IB Actions

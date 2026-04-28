@@ -2,7 +2,7 @@ import UIKit
 
 //MARK: - AuthViewControllerDelegate
 protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
+    func didAuthenticate(_ vc: AuthViewController, code: String)
 }
 
 final class SplashViewController: UIViewController {
@@ -95,20 +95,5 @@ final class SplashViewController: UIViewController {
         navigationController.modalPresentationStyle = .fullScreen
         
         present(navigationController, animated: true)
-    }
-}
-
-//MARK: - AuthViewControllerDelegate
-extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            
-            guard let scene = self.view.window?.windowScene,
-                  let sceneDelegate = scene.delegate as? SceneDelegate else {
-                return
-            }
-            sceneDelegate.showMain()
-        }
     }
 }

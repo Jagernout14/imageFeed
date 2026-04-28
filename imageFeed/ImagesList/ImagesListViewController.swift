@@ -2,6 +2,7 @@ import UIKit
 import Kingfisher
 
 protocol ImagesListViewProtocol: AnyObject {
+    
     func reloadData()
     func insertRows(at indexPaths: [IndexPath])
     func showError(_ message: String)
@@ -14,11 +15,12 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - IB Outlets
     @IBOutlet private weak var tableView: UITableView!
+    // MARK: - Public Properties
+    var presenter: ImagesListPresenterProtocol?
+    
     
     // MARK: - Private Properties
     private let showSingleImageIdentifier = "ShowSingleImage"
-    
-    var presenter: ImagesListPresenterProtocol?
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()

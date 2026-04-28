@@ -64,7 +64,7 @@ final class ImagesListService {
         isLoading = true
         let nextPage = (lastLoadedPage ?? 0) + 1
         guard let token = OAuth2TokenStorage.shared.token,
-        let request = makePhotosUrlRequest(page: nextPage, token: token) else {
+              let request = makePhotosUrlRequest(page: nextPage, token: token) else {
             isLoading = false
             return
         }

@@ -28,7 +28,6 @@ final class ProfileViewController: UIViewController {
     private lazy var descriptionLabel = UILabel()
     private lazy var logoutButton = UIButton(type: .system)
     
-    private var animationLayers = Set<CALayer>()
     private var isProfileLoaded = false
     private var isAvatarLoaded = false
     
@@ -36,8 +35,6 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.view = self
-        print("ViewController: Presenter assigned: \(presenter != nil ? "Yes" : "No")")
-
         setupUI()
         setupAnimations()
         presenter?.viewDidLoad()
@@ -45,14 +42,15 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        updateGradientFrames()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         isProfileLoaded = false
         isAvatarLoaded = false
+        
+        removeGradients()
+        setupAnimations()
         presenter?.viewWillAppear()
     }
     
@@ -175,21 +173,22 @@ final class ProfileViewController: UIViewController {
     }
     
     private func addGradient(to view: UIView, cornerRadius: CGFloat) {
+        view.layer.sublayers?
+            .filter { $0 is CAGradientLayer }
+            .forEach { $0.removeFromSuperlayer() }
+        
         let gradient = makeAnimatedGradient(frame: view.bounds, cornerRadius: cornerRadius)
         view.layer.addSublayer(gradient)
-        animationLayers.insert(gradient)
     }
     
     private func removeGradients() {
-        animationLayers.forEach {
-            $0.removeFromSuperlayer()
-        }
-        animationLayers.removeAll()
-    }
-    
-    private func updateGradientFrames() {
-        for layer in animationLayers {
-            layer.frame = layer.superlayer?.bounds ?? .zero
+        [avatarPicView, usernameLabel, accountLabel, descriptionLabel].forEach { view in
+            view.layer.sublayers?
+                .filter { $0 is CAGradientLayer }
+                .forEach {
+                    $0.removeAllAnimations()
+                    $0.removeFromSuperlayer()
+                }
         }
     }
     
@@ -197,15 +196,15 @@ final class ProfileViewController: UIViewController {
         let isLoading = !(isProfileLoaded && isAvatarLoaded)
         
         if isLoading {
-            if animationLayers.isEmpty {
-                setupAnimations()
-            }
+            removeGradients()
+            setupAnimations()
         } else {
             removeGradients()
         }
     }
     
     private func setupAnimations() {
+        removeGradients()
         addGradient(to: avatarPicView, cornerRadius: 35)
         addGradient(to: usernameLabel, cornerRadius: 0)
         addGradient(to: accountLabel, cornerRadius: 0)
@@ -217,8 +216,6 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController: ProfileViewControllerProtocol {
     
     func display(profile: ProfileViewModel) {
-        print("ViewController: Displaying profile: \(profile.name), \(profile.login)")
-
         usernameLabel.text = profile.name
         accountLabel.text = profile.login
         descriptionLabel.text = profile.bio

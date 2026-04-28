@@ -35,8 +35,6 @@ final class ProfileService {
     
     private(set) var profile: Profile?
     
-    
-    
     // MARK: - Public Methods
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         print("fetchProfile CALLED")
@@ -51,9 +49,18 @@ final class ProfileService {
             switch result {
                 
             case .success(let result):
-                let profile = Profile(username: result.username, name: "\(result.firstName) \(result.lastName ?? "")", loginName: "@\(result.username)", bio: result.bio)
-                self?.profile = profile
-                NotificationCenter.default.post(name: ProfileService.didChangeNotification, object: nil)
+                
+                let profile = Profile(
+                    username: result.username,
+                    name: "\(result.firstName) \(result.lastName ?? "")",
+                    loginName: "@\(result.username)",
+                    bio: result.bio
+                )
+                
+                self?.updateProfile(profile)
+                
+                ProfileImageService.shared.fetchProfileImageURL(username: result.username) { _ in }
+                
                 completion(.success(profile))
                 
             case .failure(let error):
@@ -64,6 +71,11 @@ final class ProfileService {
         }
         self.task = task
         task.resume()
+    }
+    
+    func updateProfile(_ profile: Profile) {
+        self.profile = profile
+        NotificationCenter.default.post(name: Self.didChangeNotification, object: nil)
     }
     
     func logoutProfile() {

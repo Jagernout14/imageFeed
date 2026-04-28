@@ -29,7 +29,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func showMain() {
         let tabBar = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
+        
         window?.rootViewController = tabBar
+        
+        loadProfileIfNeeded()
     }
     
     func showAuth() {
@@ -42,30 +45,55 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let nav = UINavigationController(rootViewController: authVC)
         window?.rootViewController = nav
     }
+    
+    private func loadProfileIfNeeded() {
+        guard
+            let token = OAuth2TokenStorage.shared.token
+        else { return }
+        
+        ProfileService.shared.fetchProfile(token) { result in
+            switch result {
+            case .success(let profile):
+                ProfileService.shared.updateProfile(profile)
+                ProfileImageService.shared.fetchProfileImageURL(
+                    username: profile.username
+                ) { _ in }
+                
+            case .failure(let error):
+                print("Profile load error:", error)
+            }
+        }
+    }
 }
 
 extension SceneDelegate: AuthViewControllerDelegate {
     
-    func didAuthenticate(_ vc: AuthViewController) {
-        vc.dismiss(animated: true)
-        showMain()
-    }
-    
-    /*  func didAuthenticate(_ vc: AuthViewController) {
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+    func didAuthenticate(_ vc: AuthViewController, code: String) {
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
-
-                ProfileService.shared.fetchProfile()
-                ProfileImageService.shared.fetchAvatar()
-
-                vc.dismiss(animated: true)
-                self.showMain()
-
-            case .failure:
-                break
+                ProfileService.shared.fetchProfile(token) { profileResult in
+                    switch profileResult {
+                    case .success(let profile):
+                        ProfileService.shared.updateProfile(profile)
+                        ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
+                        
+                        DispatchQueue.main.async {
+                            vc.dismiss(animated: true) {
+                                self.showMain()
+                            }
+                        }
+                        
+                    case .failure(let error):
+                        print("Profile error:", error)
+                    }
+                }
+                
+            case .failure(let error):
+                print("Auth error:", error)
             }
-        } */
+        }
     }
-
+}

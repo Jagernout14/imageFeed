@@ -3,17 +3,18 @@ import WebKit
 
 //MARK: - WebViewViewControllerDelegate
 protocol WebViewViewControllerDelegate: AnyObject {
+    
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
 public protocol WebViewViewControllerProtocol: AnyObject {
+    
     var presenter: WebViewPresenterProtocol? { get set }
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)
 }
-
 
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
     
@@ -22,25 +23,22 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     @IBOutlet var progressView: UIProgressView!
     
     // MARK: - Public Properties
-    
-    
     weak var delegate: WebViewViewControllerDelegate?
     var progress: Float = 0.5
     var presenter: WebViewPresenterProtocol?
     
+    // MARK: - Private Properties
     private var estimatedProgressObservation: NSKeyValueObservation?
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         webView.accessibilityIdentifier = "authWebView"
         
         estimatedProgressObservation = webView.observe(\.estimatedProgress, options: [.new]) { [weak self] webView, _ in
             guard let self else { return }
             presenter?.didUpdateProgressValue(webView.estimatedProgress)
         }
-        
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
     }
@@ -49,11 +47,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     func load(request: URLRequest) {
         webView.load(request)
     }
-    
-    // MARK: - Private Methods
-    
-    
-    
     
     func setProgressValue(_ newValue: Float) {
         progressView.progress = newValue
@@ -67,9 +60,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
 // MARK: - WKNavigationDelegate
 extension WebViewViewController: WKNavigationDelegate {
     
-    func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)

@@ -53,7 +53,6 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
             DispatchQueue.main.async {
                 guard let self else { return }
                 self.view?.hideLoading()
-                
                 switch result {
                 case .success:
                     if let index = self.photos.firstIndex(where: { $0.id == photo.id }) {

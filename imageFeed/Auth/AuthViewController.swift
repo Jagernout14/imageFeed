@@ -60,33 +60,18 @@ final class AuthViewController: UIViewController {
 
 // MARK: - WebViewViewControllerDelegate
 extension  AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController,
-                               didAuthenticateWithCode code: String) {
-        
+    
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
-        
         UIBlockingProgressHUD.show()
-        
         fetchOAuthToken(code) { [weak self] result in
             guard let self else { return }
-            
             UIBlockingProgressHUD.dismiss()
-            
             switch result {
-                
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
-                ProfileService.shared.fetchProfile(token) { _ in
-                    DispatchQueue.main.async {
-                        guard let delegate = SceneDelegate.shared else {
-                            print("❌ SceneDelegate missing")
-                            return
-                        }
-                        delegate.showMain()
-                    }
-                    ProfileService.shared.fetchProfile(token) { result in
-                        print("PROFILE RESULT:", result)
-                    }
+                DispatchQueue.main.async {
+                    SceneDelegate.shared?.showMain()
                 }
                 
             case .failure(let error):
@@ -102,6 +87,7 @@ extension  AuthViewController: WebViewViewControllerDelegate {
 }
 
 extension AuthViewController {
+    
     func showAuthErrorAlert() {
         let alert = UIAlertController(title: "Что-то пошло не по плану", message: "Авторизация не удалась", preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default, handler: nil)

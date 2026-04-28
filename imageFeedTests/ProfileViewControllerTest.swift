@@ -2,7 +2,7 @@
 import XCTest
 
 final class ProfileImageViewControllerTest: XCTestCase {
-        
+    
     
     func testViewControllerCallsViewDidLoad() {
         let viewController = ProfileViewController()
@@ -43,5 +43,4 @@ final class ProfileImageViewControllerTest: XCTestCase {
         XCTAssertNotNil(alert)
         XCTAssertEqual(alert?.title, "Пока, Пока!")
     }
-    
 }

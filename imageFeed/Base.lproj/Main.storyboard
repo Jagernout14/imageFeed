@@ -141,6 +141,7 @@
                             </scrollView>
                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25x-Fg-X0i" userLabel="BackwardButton">
                                 <rect key="frame" x="8" y="67" width="44" height="44"/>
+                                <accessibility key="accessibilityConfiguration" identifier="backButton"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="5bf-jh-ZKJ"/>
                                     <constraint firstAttribute="height" constant="44" id="8Yu-kb-lDW"/>
@@ -202,6 +203,7 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ffl-b7-iht" userLabel="LoginButton">
                                 <rect key="frame" x="16" y="646" width="361" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="ijK-S6-RZg"/>
                                 </constraints>

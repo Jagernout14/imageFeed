@@ -33,11 +33,11 @@ final class AuthViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    private func configureBackButton() {
-        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
-        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
+   private func configureBackButton() {
+        navigationController?.navigationBar.backIndicatorImage = UIImage(resource: .navBackButton)
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(resource: .navBackButton)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        navigationItem.backBarButtonItem?.tintColor = UIColor(named: "IF_Black")
+        navigationItem.backBarButtonItem?.tintColor = UIColor(resource: .ifBlack)
     }
     
     private func fetchOAuthToken(_ code: String, completion: @escaping(Result <String, Error>) -> Void) {

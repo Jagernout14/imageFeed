@@ -34,6 +34,8 @@ final class ImagesListCell: UITableViewCell {
         super.awakeFromNib()
         likeButton.setImage(UIImage(resource: .likeButtonInactiveIcon), for: .normal)
         likeButton.setImage(UIImage(resource: .likeButtonActiveIcon), for: .selected)
+        likeButton.accessibilityIdentifier = "likeButton"
+
     }
     
     //MARK: - IB Actions
@@ -76,5 +78,4 @@ final class ImagesListCell: UITableViewCell {
         gradientLayer?.removeFromSuperlayer()
         gradientLayer = nil
     }
-    
 }

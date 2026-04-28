@@ -41,6 +41,17 @@
                ReferencedContainer = "container:imageFeed.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "284DC5CF2F9FFEDF00F018D2"
+               BuildableName = "imageFeedUITests.xctest"
+               BlueprintName = "imageFeedUITests"
+               ReferencedContainer = "container:imageFeed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

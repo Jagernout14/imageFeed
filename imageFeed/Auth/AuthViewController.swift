@@ -10,6 +10,11 @@ final class AuthViewController: UIViewController {
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if ProcessInfo.processInfo.arguments.contains("UITEST") {
+                navigationController?.setNavigationBarHidden(true, animated: false)
+            }
+        
         configureBackButton()
     }
     

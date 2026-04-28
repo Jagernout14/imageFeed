@@ -5,17 +5,19 @@ final class imageFeedUITests: XCTestCase {
     
     private let app = XCUIApplication()
 
+
     override func setUpWithError() throws {
         continueAfterFailure = false
         app.launch()
     }
     
     func testAuth() throws {
+        app.launchArguments.append("UITEST")
         app.buttons["Authenticate"].tap()
         
-        let webView = app.webViews["authWebView"]
+        let webView = app.webViews["WebViewViewController"]
         
-        XCTAssertTrue(webView.waitForExistence(timeout: 15))
+        XCTAssertTrue(webView.waitForExistence(timeout: 5))
 
         let loginTextField = webView.descendants(matching: .textField).element
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
@@ -23,8 +25,6 @@ final class imageFeedUITests: XCTestCase {
         loginTextField.tap()
         loginTextField.typeText("jagernout@icloud.com")
         webView.swipeUp()
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
-
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
@@ -40,6 +40,7 @@ final class imageFeedUITests: XCTestCase {
         
         XCTAssertTrue(cell.waitForExistence(timeout: 5))
     }
+    
     
     func testFeed() throws {
         let tablesQuery = app.tables
@@ -73,12 +74,14 @@ final class imageFeedUITests: XCTestCase {
         sleep(3)
         app.tabBars.buttons.element(boundBy: 1).tap()
        
-        XCTAssertTrue(app.staticTexts["Name Lastname"].exists)
-        XCTAssertTrue(app.staticTexts["@username"].exists)
+        XCTAssertTrue(app.staticTexts["userName.name"].exists)
+        XCTAssertTrue(app.staticTexts["loginName"].exists)
         
-        app.buttons["logout button"].tap()
+        app.buttons["logoutButton"].tap()
         
-        app.alerts["Bye bye!"].scrollViews.otherElements.buttons["Yes"].tap()
+        let alert = app.alerts["Пока, Пока!"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 2))
+        alert.buttons["Да"].tap()
     }
     
 }

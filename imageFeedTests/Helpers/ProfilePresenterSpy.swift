@@ -2,6 +2,9 @@
 import Foundation
 
 final class ProfilePresenterSpy: ProfilePresenterProtocol {
+    func viewWillAppear() {
+        viewDidLoadCalled = true
+    }
     
     weak var view: ProfileViewControllerProtocol?
     

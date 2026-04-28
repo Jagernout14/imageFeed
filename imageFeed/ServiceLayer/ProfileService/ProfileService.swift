@@ -35,8 +35,11 @@ final class ProfileService {
     
     private(set) var profile: Profile?
     
+    
+    
     // MARK: - Public Methods
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+        print("fetchProfile CALLED")
         task?.cancel()
         
         guard let request = makeProfileURLRequest(token: token) else {

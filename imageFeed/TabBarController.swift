@@ -4,6 +4,8 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("ProfileService profile:", ProfileService.shared.profile as Any)
+        print("Avatar:", ProfileImageService.shared.avatarURL as Any)
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         // MARK: - Images List
@@ -22,17 +24,17 @@ final class TabBarController: UITabBarController {
         )
         
         // MARK: - Profile
-        let profileVC = ProfileViewController()
+        let profileViewController = ProfileViewController()
         let profilePresenter = ProfilePresenter()
         
-        profileVC.presenter = profilePresenter
-        profilePresenter.view = profileVC
-        profileVC.tabBarItem = UITabBarItem(
+        profileViewController.presenter = profilePresenter
+        profilePresenter.view = profileViewController
+        profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(resource: .tabProfileActiveIcon),
             selectedImage: nil
         )
         
-        viewControllers = [imagesListVC, profileVC]
+        viewControllers = [imagesListVC, profileViewController]
     }
 }

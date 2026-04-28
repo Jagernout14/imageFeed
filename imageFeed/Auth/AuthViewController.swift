@@ -6,7 +6,6 @@ final class AuthViewController: UIViewController {
     // MARK: - Public Properties
     let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2ServiceToken = OAuth2Service.shared
-    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
@@ -33,7 +32,7 @@ final class AuthViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-   private func configureBackButton() {
+    private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(resource: .navBackButton)
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(resource: .navBackButton)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -47,26 +46,51 @@ final class AuthViewController: UIViewController {
             }
         }
     }
+    
+    private func showMainFromScene() {
+        guard let scene = self.view.window?.windowScene,
+              let sceneDelegate = scene.delegate as? SceneDelegate else {
+            assertionFailure("No SceneDelegate")
+            return
+        }
+        
+        sceneDelegate.showMain()
+    }
 }
 
 // MARK: - WebViewViewControllerDelegate
 extension  AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+    func webViewViewController(_ vc: WebViewViewController,
+                               didAuthenticateWithCode code: String) {
+        
         vc.dismiss(animated: true)
+        
         UIBlockingProgressHUD.show()
         
         fetchOAuthToken(code) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
             guard let self else { return }
             
+            UIBlockingProgressHUD.dismiss()
+            
             switch result {
+                
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
-                print("Успешная авторизация. Токен \(token)")
-                self.delegate?.didAuthenticate(self)
+                ProfileService.shared.fetchProfile(token) { _ in
+                    DispatchQueue.main.async {
+                        guard let delegate = SceneDelegate.shared else {
+                            print("❌ SceneDelegate missing")
+                            return
+                        }
+                        delegate.showMain()
+                    }
+                    ProfileService.shared.fetchProfile(token) { result in
+                        print("PROFILE RESULT:", result)
+                    }
+                }
                 
             case .failure(let error):
-                print("Не удалось авторизоваться. Ошибка \(error)")
+                print("Auth error:", error)
                 self.showAuthErrorAlert()
             }
         }

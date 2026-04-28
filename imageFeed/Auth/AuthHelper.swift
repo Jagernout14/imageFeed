@@ -36,7 +36,6 @@ final class AuthHelper: AuthHelperProtocol {
         guard let url = authURL() else {
             return nil
         }
-        
         return URLRequest(url: url)
     }
     

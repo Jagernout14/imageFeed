@@ -3,6 +3,7 @@ import Foundation
 protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
+    func viewWillAppear()
     func didTapLogout()
     func didConfirmLogout()
 }
@@ -46,16 +47,26 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
     
     func viewDidLoad() {
+        print("Presenter: viewDidLoad called")
+        
         observeProfileServiceChanges()
         observeAvatarChanges()
+        loadInitialData()
+    }
+    
+    func viewWillAppear() {
         loadInitialData()
     }
     
     // MARK: - Private Methods
     private func observeProfileServiceChanges() {
         profileServiceObserver = NotificationCenter.default.addObserver(forName: ProfileService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            print("Presenter: Received profile change notification")
+            
             guard let self,
-                  let profile = self.profileService.profile else { return }
+                  let profile = self.profileService.profile else {
+                print("Presenter: No profile data in notification handler")
+                return }
             
             self.present(profile: profile)
         }
@@ -71,11 +82,21 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
     
     private func loadInitialData() {
+        print("loadInitialData called")
+
         if let profile = profileService.profile {
+            print("Profile exists")
             present(profile: profile)
+        } else {
+            print("Profile is nil ❌")
         }
+
         if let url = imageService.avatarURL {
+            print("Avatar exists")
             view?.displayAvatar(urlString: url)
+        } else {
+            print("Avatar is nil ❌")
         }
     }
-}
+    }
+

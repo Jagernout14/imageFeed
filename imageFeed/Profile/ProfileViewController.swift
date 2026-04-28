@@ -36,6 +36,8 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter?.view = self
+        print("ViewController: Presenter assigned: \(presenter != nil ? "Yes" : "No")")
+
         setupUI()
         setupAnimations()
         presenter?.viewDidLoad()
@@ -44,6 +46,14 @@ final class ProfileViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateGradientFrames()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        isProfileLoaded = false
+        isAvatarLoaded = false
+        presenter?.viewWillAppear()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -207,6 +217,8 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController: ProfileViewControllerProtocol {
     
     func display(profile: ProfileViewModel) {
+        print("ViewController: Displaying profile: \(profile.name), \(profile.login)")
+
         usernameLabel.text = profile.name
         accountLabel.text = profile.login
         descriptionLabel.text = profile.bio
@@ -237,6 +249,7 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let delegate = scene.delegate as? SceneDelegate else { return }
         
-        delegate.switchToMain()
+        OAuth2TokenStorage.shared.token = nil
+        delegate.showAuth()
     }
 }

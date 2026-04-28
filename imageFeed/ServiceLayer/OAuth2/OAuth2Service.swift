@@ -35,34 +35,35 @@ final class OAuth2Service {
             completion(.failure(AuthServiceError.invalidRequest))
             return
         }
+        
         task?.cancel()
-        lastCode = nil //
         lastCode = code
-        guard let request = makeOAuthTokenRequest(code: code)
-        else {
+        
+        guard let request = makeOAuthTokenRequest(code: code) else {
             completion(.failure(AuthServiceError.invalidRequest))
             return
         }
         
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-            UIBlockingProgressHUD.dismiss()
             guard let self else { return }
-            
             switch result {
-            case .success(let body):
-                let authToken = body.accessToken
-                self.authToken = authToken
-                completion(.success(authToken))
                 
+            case .success(let token):
+                let authToken = token.accessToken
+                self.authToken = authToken
                 self.task = nil
                 self.lastCode = nil
+                DispatchQueue.main.async {
+                    completion(.success(authToken))
+                }
                 
             case .failure(let error):
-                print("[fetchOAuthToken]: Ошибка запроса: \(error.localizedDescription)")
-                completion(.failure(error))
-                
+                print("[fetchOAuthToken]: Ошибка:", error)
                 self.task = nil
                 self.lastCode = nil
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
         
@@ -87,7 +88,6 @@ final class OAuth2Service {
         guard let authTokenUrl = urlComponents.url else {
             return nil
         }
-        
         var request = URLRequest(url: authTokenUrl)
         request.httpMethod = HTTPMethod.post.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Accept")

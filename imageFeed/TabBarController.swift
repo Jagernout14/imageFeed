@@ -4,14 +4,12 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("ProfileService profile:", ProfileService.shared.profile as Any)
-        print("Avatar:", ProfileImageService.shared.avatarURL as Any)
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         // MARK: - Images List
-        let imagesListVC = storyboard.instantiateViewController(
+       guard let imagesListVC = storyboard.instantiateViewController(
             withIdentifier: "ImagesListViewController"
-        ) as! ImagesListViewController
+       ) as? ImagesListViewController else { return }
         
         let imagesPresenter = ImagesListPresenter()
         imagesListVC.presenter = imagesPresenter

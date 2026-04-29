@@ -2,26 +2,19 @@ import Foundation
 
 //MARK: AuthHelperProtocol
 protocol AuthHelperProtocol {
-    func authRequest() -> URLRequest?
-    func code(from: URL) -> String?
+    var authURLRequest: URLRequest? { get }
+    func getCode(from: URL) -> String?
 }
 
 final class AuthHelper: AuthHelperProtocol {
     
     // MARK: - Public Properties
-    let configuration: AuthConfiguration
+    private let configuration: AuthConfiguration
     
-    // MARK: - Initializers
-    init(configuration: AuthConfiguration = .standard) {
-        self.configuration = configuration
-    }
-    
-    // MARK: - Public Methods
-    func authURL() -> URL? {
+    var authURL: URL? {
         guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             return nil
         }
-        
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: configuration.accessKey),
             URLQueryItem(name: "redirect_uri", value: configuration.redirectURI),
@@ -32,14 +25,19 @@ final class AuthHelper: AuthHelperProtocol {
         return urlComponents.url
     }
     
-    func authRequest() -> URLRequest? {
-        guard let url = authURL() else {
-            return nil
-        }
+    // MARK: - Private Properties
+    var authURLRequest: URLRequest? {
+        guard let url = authURL else { return nil }
         return URLRequest(url: url)
     }
     
-    func code(from url: URL) -> String? {
+    // MARK: - Initializers
+    init(configuration: AuthConfiguration = .standard) {
+        self.configuration = configuration
+    }
+    
+    // MARK: - Public Methods
+    func getCode(from url: URL) -> String? {
         if let urlComponents = URLComponents(string: url.absoluteString),
            urlComponents.path == "/oauth/authorize/native",
            let items = urlComponents.queryItems,

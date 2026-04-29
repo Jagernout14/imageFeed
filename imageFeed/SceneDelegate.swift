@@ -1,5 +1,5 @@
 import UIKit
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     static weak var shared: SceneDelegate?
     var window: UIWindow?

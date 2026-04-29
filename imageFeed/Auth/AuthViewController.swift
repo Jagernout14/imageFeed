@@ -10,11 +10,6 @@ final class AuthViewController: UIViewController {
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if ProcessInfo.processInfo.arguments.contains("UITEST") {
-                navigationController?.setNavigationBarHidden(true, animated: false)
-            }
-        
         configureBackButton()
     }
     
@@ -70,8 +65,8 @@ extension  AuthViewController: WebViewViewControllerDelegate {
         vc.dismiss(animated: true)
         UIBlockingProgressHUD.show()
         fetchOAuthToken(code) { [weak self] result in
-            guard let self else { return }
             UIBlockingProgressHUD.dismiss()
+            guard let self else { return }
             switch result {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token

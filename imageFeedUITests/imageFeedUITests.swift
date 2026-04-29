@@ -12,7 +12,6 @@ final class imageFeedUITests: XCTestCase {
     }
     
     func testAuth() throws {
-        app.launchArguments.append("UITEST")
         app.buttons["Authenticate"].tap()
         
         let webView = app.webViews["WebViewViewController"]

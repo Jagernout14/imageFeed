@@ -3,15 +3,19 @@ import Foundation
 protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
-    func viewWillAppear()
     func didTapLogout()
     func didConfirmLogout()
+}
+
+protocol ProfilePresenterDelegate: AnyObject {
+    func didLogout()
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
     
     // MARK: - Public Properties
     weak var view: ProfileViewControllerProtocol?
+    weak var delegate: ProfilePresenterDelegate?
     
     // MARK: - Private Properties
     private let profileService = ProfileService.shared
@@ -43,19 +47,13 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     func didConfirmLogout() {
         logoutService.logout()
-        view?.showLogoutFlow()
+        delegate?.didLogout()
     }
     
     func viewDidLoad() {
         observeProfileServiceChanges()
         observeAvatarChanges()
         loadInitialData()
-    }
-    
-    func viewWillAppear() {
-        if let profile = profileService.profile {
-            present(profile: profile)
-        }
     }
     
     // MARK: - Private Methods

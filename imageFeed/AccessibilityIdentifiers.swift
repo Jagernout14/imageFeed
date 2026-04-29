@@ -22,6 +22,7 @@ struct AccessibilityIdentifiers {
         static let usernameLabel = "userName.name"
         static let accountLabel = "loginName"
         static let logoutButton = "logoutButton"
+        static let ProfileViewControllerIdentifier = "ProfileViewController"
     }
     
    

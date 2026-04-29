@@ -5,14 +5,12 @@ protocol ProfileViewControllerProtocol: AnyObject {
     func display(profile: ProfileViewModel)
     func displayAvatar(urlString: String)
     func showLogoutConfirmation()
-    func showLogoutFlow()
 }
 
 final class ProfileViewController: UIViewController {
     
     // MARK: - Public Properties
-    var presenter: ProfilePresenterProtocol?
-    
+    var presenter: ProfilePresenterProtocol?    
     enum SystemImage: String {
         case avatar = "person.circle.fill"
         func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
@@ -32,13 +30,13 @@ final class ProfileViewController: UIViewController {
     private var isAvatarLoaded = false
     private let fadingView = UIView()
     
+    
+    
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.view = self
+        view.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.ProfileViewControllerIdentifier
         setupUI()
-        setupFading()
-        bringFadingToFront()
         presenter?.viewDidLoad()
     }
     
@@ -50,14 +48,6 @@ final class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         isProfileLoaded = false
         isAvatarLoaded = false
-        
-        updateLoadingState()
-        bringFadingToFront()
-        presenter?.viewWillAppear()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
     }
     
     // MARK: - Public Methods
@@ -78,6 +68,7 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Private Methods
     @objc private func didTapLogoutButton() {
+        
         presenter?.didTapLogout()
     }
     
@@ -148,40 +139,6 @@ final class ProfileViewController: UIViewController {
     private func setupBackground() {
         view.backgroundColor = UIColor(resource: .ifBackground)
     }
-    
-    private func updateLoadingState() {
-        let isLoading = !(isProfileLoaded && isAvatarLoaded)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.fadingView.isHidden = !isLoading
-            
-            if isLoading {
-                self.bringFadingToFront()
-            }
-        }
-    }
-    
-    private func setupFading() {
-        fadingView.frame = view.bounds
-        fadingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        fadingView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
-        fadingView.isHidden = false
-        
-        view.addSubview(fadingView)
-    }
-    
-    private func showFading() {
-        fadingView.isHidden = false
-    }
-    
-    private func hideFading() {
-        fadingView.isHidden = true
-    }
-    
-    private func bringFadingToFront() {
-        view.bringSubviewToFront(fadingView)
-    }
 }
 
 //MARK: - ProfileViewControllerProtocol
@@ -193,7 +150,6 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         descriptionLabel.text = profile.bio
         
         isProfileLoaded = true
-        updateLoadingState()
     }
     
     func displayAvatar(urlString: String) {
@@ -210,15 +166,6 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         ]
         ) { [weak self] _ in
             self?.isAvatarLoaded = true
-            self?.updateLoadingState()
         }
-    }
-    
-    func showLogoutFlow() {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let delegate = scene.delegate as? SceneDelegate else { return }
-        
-        OAuth2TokenStorage.shared.token = nil
-        delegate.showAuth()
     }
 }

@@ -1,7 +1,15 @@
 import UIKit
 import ProgressHUD
 
+protocol AuthNavigationDelegate: AnyObject {
+    func authViewControllerDidAuthenticate(_ viewController: AuthViewController)
+    func authViewControllerDidCancel(_ viewController: AuthViewController)
+    func authViewController(_ viewController: AuthViewController, didFailWith error: Error)
+}
+
 final class AuthViewController: UIViewController {
+    
+    weak var navigationDelegate: AuthNavigationDelegate?
     
     // MARK: - Public Properties
     let showWebViewSegueIdentifier = SegueIdentifiers.showWebViewSegue
@@ -46,16 +54,6 @@ final class AuthViewController: UIViewController {
             }
         }
     }
-    
-    private func showMainFromScene() {
-        guard let scene = self.view.window?.windowScene,
-              let sceneDelegate = scene.delegate as? SceneDelegate else {
-            assertionFailure("No SceneDelegate")
-            return
-        }
-        
-        sceneDelegate.showMain()
-    }
 }
 
 // MARK: - WebViewViewControllerDelegate
@@ -70,19 +68,18 @@ extension  AuthViewController: WebViewViewControllerDelegate {
             switch result {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
-                DispatchQueue.main.async {
-                    SceneDelegate.shared?.showMain()
-                }
+                self.navigationDelegate?.authViewControllerDidAuthenticate(self)
                 
             case .failure(let error):
-                print("Auth error:", error)
-                self.showAuthErrorAlert()
+                self.navigationDelegate?.authViewController(self, didFailWith: error)
+                print(error)
             }
         }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
+        self.navigationDelegate?.authViewControllerDidCancel(self)
     }
 }
 

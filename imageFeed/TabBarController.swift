@@ -7,9 +7,9 @@ final class TabBarController: UITabBarController {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         // MARK: - Images List
-       guard let imagesListVC = storyboard.instantiateViewController(
+        guard let imagesListVC = storyboard.instantiateViewController(
             withIdentifier: "ImagesListViewController"
-       ) as? ImagesListViewController else { return }
+        ) as? ImagesListViewController else { return }
         
         let imagesPresenter = ImagesListPresenter()
         imagesListVC.presenter = imagesPresenter
@@ -27,6 +27,7 @@ final class TabBarController: UITabBarController {
         
         profileViewController.presenter = profilePresenter
         profilePresenter.view = profileViewController
+        profilePresenter.delegate = self
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(resource: .tabProfileActiveIcon),
@@ -34,5 +35,19 @@ final class TabBarController: UITabBarController {
         )
         
         viewControllers = [imagesListVC, profileViewController]
+    }
+}
+
+extension TabBarController: ProfilePresenterDelegate {
+    func didLogout() {
+        print("🚪 LOGOUT FROM TABBAR")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let authVC = storyboard.instantiateViewController(
+            withIdentifier: "AuthViewController"
+        ) as? AuthViewController else { return }
+        
+        let nav = UINavigationController(rootViewController: authVC)
+        view.window?.rootViewController = nav
     }
 }

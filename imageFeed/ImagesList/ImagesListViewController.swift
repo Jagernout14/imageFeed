@@ -20,7 +20,7 @@ final class ImagesListViewController: UIViewController {
     
     
     // MARK: - Private Properties
-    private let showSingleImageIdentifier = "ShowSingleImage"
+    private let showSingleImageIdentifier = AccessibilityIdentifiers.ImagesListView.showSingleImage
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()

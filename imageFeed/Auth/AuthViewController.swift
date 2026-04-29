@@ -4,7 +4,7 @@ import ProgressHUD
 final class AuthViewController: UIViewController {
     
     // MARK: - Public Properties
-    let showWebViewSegueIdentifier = "ShowWebView"
+    let showWebViewSegueIdentifier = SegueIdentifiers.showWebViewSegue
     private let oauth2ServiceToken = OAuth2Service.shared
     
     // MARK: - Overrides Methods

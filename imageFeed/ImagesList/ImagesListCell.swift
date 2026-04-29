@@ -14,7 +14,7 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var likeButton: UIButton!
     
     // MARK: - Public Properties
-    static let reuseIdentifier = "ImagesListCell"
+    static let reuseIdentifier = AccessibilityIdentifiers.ImageListCell.imagesListCell
     weak var delegate: ImagesListCellDelegate?
     
     // MARK: - Overrides Methods
@@ -35,7 +35,7 @@ final class ImagesListCell: UITableViewCell {
         super.awakeFromNib()
         likeButton.setImage(UIImage(resource: .likeButtonInactiveIcon), for: .normal)
         likeButton.setImage(UIImage(resource: .likeButtonActiveIcon), for: .selected)
-        likeButton.accessibilityIdentifier = "likeButton"
+        likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.likeButton
         
     }
     

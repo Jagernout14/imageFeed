@@ -106,7 +106,7 @@ final class ProfileViewController: UIViewController {
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         usernameLabel.textColor = UIColor(resource: .ifWhite)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        usernameLabel.accessibilityIdentifier = "userName.name"
+        usernameLabel.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.usernameLabel
         
         view.addSubview(usernameLabel)
         usernameLabel.topAnchor.constraint(equalTo: avatarPicView.bottomAnchor, constant: 8).isActive = true
@@ -117,7 +117,7 @@ final class ProfileViewController: UIViewController {
         accountLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         accountLabel.textColor = UIColor(resource: .ifGrey)
         accountLabel.translatesAutoresizingMaskIntoConstraints = false
-        accountLabel.accessibilityIdentifier = "loginName"
+        accountLabel.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.accountLabel
         view.addSubview(accountLabel)
         accountLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 8).isActive = true
         accountLabel.leadingAnchor.constraint(equalTo: avatarPicView.leadingAnchor).isActive = true
@@ -136,7 +136,7 @@ final class ProfileViewController: UIViewController {
         logoutButton.setImage(UIImage(resource: .exitIcon), for: .normal)
         logoutButton.tintColor = UIColor(resource: .ifRed)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
-        logoutButton.accessibilityIdentifier = "logoutButton"
+        logoutButton.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.logoutButton
         view.addSubview(logoutButton)
         logoutButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
         logoutButton.heightAnchor.constraint(equalToConstant: 44).isActive = true

@@ -14,7 +14,7 @@ final class SplashViewController: UIViewController {
     
     // MARK: - Private Properties
     private let storage = OAuth2TokenStorage.shared
-    private let showAuthenticationScreenSegueIdentifier = "ShowAuthScreen"
+    private let showAuthenticationScreenSegueIdentifier = SegueIdentifiers.showAuthScreen
     private let profileService = ProfileService.shared
     private var isProfileIsLoaded = false
     
@@ -68,7 +68,7 @@ final class SplashViewController: UIViewController {
     //MARK: UI Setting
     private let logoView = UIImageView()
     private func setupBackGround() {
-        view.backgroundColor = UIColor(named: "IF_Background")
+        view.backgroundColor = UIColor(resource: .ifBackground)
     }
     
     private func setupLogo() {

@@ -33,7 +33,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        webView.accessibilityIdentifier = "authWebView"
+        webView.accessibilityIdentifier = AccessibilityIdentifiers.WebView.webView
         
         estimatedProgressObservation = webView.observe(\.estimatedProgress, options: [.new]) { [weak self] webView, _ in
             guard let self else { return }

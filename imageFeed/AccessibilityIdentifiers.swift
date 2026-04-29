@@ -7,5 +7,22 @@ struct AccessibilityIdentifiers {
 
     }
     
+    struct ImageListCell {
+        static let imagesListCell = "ImagesListCell"
+        static let likeButton = "likeButton"
+        
+    }
+    
+    struct ImagesListView {
+        static let showSingleImage = "ShowSingleImage"
+        
+    }
+    
+    struct ProfileView {
+        static let usernameLabel = "userName.name"
+        static let accountLabel = "loginName"
+        static let logoutButton = "logoutButton"
+    }
+    
    
 }

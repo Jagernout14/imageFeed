@@ -1,6 +1,5 @@
 import Foundation
 
-//MARK: WebViewPresenterProtocol
 public protocol WebViewPresenterProtocol {
     var view: WebViewViewControllerProtocol? { get set }
     func viewDidLoad()

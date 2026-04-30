@@ -13,7 +13,7 @@ final class WebViewViewControllerTests: XCTestCase {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         vc = storyboard.instantiateViewController(
-            withIdentifier: "WebViewViewController"
+            withIdentifier: AccessibilityIdentifiers.WebView.webView
         ) as? WebViewViewController
         
         presenter = WebViewPresenterSpy()
@@ -26,6 +26,7 @@ final class WebViewViewControllerTests: XCTestCase {
         vc.delegate = delegate
     }
     
+    // MARK: - Tests
     func testPresenterCallsLoadRequest() {
         let view = WebViewViewControllerSpy()
         let authHelper = AuthHelperSpy()

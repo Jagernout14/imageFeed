@@ -24,11 +24,11 @@ final class ProfileViewControllerTests: XCTestCase {
     }
     
     // MARK: - Tests
-    func test_viewDidLoad_callsPresenter() {
+    func testViewDidLoadCallsPresenter() {
         XCTAssertTrue(presenterSpy.viewDidLoadCalled)
     }
     
-    func test_showLogoutConfirmation_presentsAlert() {
+    func testShowLogoutConfirmationPresentsAlert() {
         let window = UIWindow()
         window.rootViewController = viewController
         window.makeKeyAndVisible()
@@ -40,7 +40,7 @@ final class ProfileViewControllerTests: XCTestCase {
         XCTAssertEqual(alert?.title, "Пока, Пока!")
     }
     
-    func test_logoutButtonTap_callsPresenter() {
+    func testLogoutButtonTapCallsPresenter() {
         let button = viewController.view.subviews
             .compactMap { $0 as? UIButton }
             .first { $0.accessibilityIdentifier == AccessibilityIdentifiers.ProfileView.logoutButton }

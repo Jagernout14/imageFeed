@@ -12,27 +12,29 @@ final class imageFeedUITests: XCTestCase {
     }
     
     func testAuth() throws {
-        app.buttons["Authenticate"].tap()
-        
-        sleep(5)
+        print("💥💥💥Starting authentication test")
+            app.buttons["Authenticate"].tap()
+            print("💥💥💥Authenticate button tapped")
         print(app.debugDescription)
-        
-        let webView = app.webViews["authWebView"]
-        
-        XCTAssertTrue(webView.waitForExistence(timeout: 5))
+
+            
+        let webView = app.webViews.firstMatch
+        XCTAssertTrue(webView.waitForExistence(timeout: 10))
+            XCTAssertTrue(webView.waitForExistence(timeout: 10), "Web view didn't appear")
+            print("💥💥💥Web view appeared")
 
         let loginTextField = webView.descendants(matching: .textField).element
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
         
         loginTextField.tap()
-        loginTextField.typeText("")
+        loginTextField.typeText("jagernout@icloud.com")
         webView.swipeUp()
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
         
         passwordTextField.tap()
-        passwordTextField.typeText("")
+        passwordTextField.typeText("12341234")
         webView.swipeUp()
         
         webView.buttons["Login"].tap()

@@ -1,13 +1,15 @@
-import XCTest
 @testable import imageFeed
+import XCTest
 
 final class ImagesListViewSpy: ImagesListViewProtocol {
 
     var reloadDataCalled = false
     var insertRowsCalled = false
-    var showErrorCalled = false
+    var insertedIndexPaths: [IndexPath] = []
+
     var showLoadingCalled = false
     var hideLoadingCalled = false
+    var errorMessage: String?
 
     func reloadData() {
         reloadDataCalled = true
@@ -15,10 +17,11 @@ final class ImagesListViewSpy: ImagesListViewProtocol {
 
     func insertRows(at indexPaths: [IndexPath]) {
         insertRowsCalled = true
+        insertedIndexPaths = indexPaths
     }
 
     func showError(_ message: String) {
-        showErrorCalled = true
+        errorMessage = message
     }
 
     func showLoading() {

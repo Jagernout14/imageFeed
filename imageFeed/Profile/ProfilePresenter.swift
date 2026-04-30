@@ -53,7 +53,14 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     func viewDidLoad() {
         observeProfileServiceChanges()
         observeAvatarChanges()
-        loadInitialData()
+        
+        if let profile = profileService.profile {
+            present(profile: profile)
+        } else {
+            if let token = OAuth2TokenStorage.shared.token {
+                profileService.fetchProfile(token) { _ in }
+            }
+        }
     }
     
     // MARK: - Private Methods
@@ -81,9 +88,16 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         if let profile = profileService.profile {
             present(profile: profile)
         }
-        
         if let url = imageService.avatarURL {
             view?.displayAvatar(urlString: url)
         }
+    }
+    
+    private func requestProfileIfNeeded() {
+        guard profileService.profile == nil else { return }
+        
+        guard let token = OAuth2TokenStorage.shared.token else { return }
+        
+        profileService.fetchProfile(token) { _ in }
     }
 }

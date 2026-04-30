@@ -1,9 +1,16 @@
 import UIKit
 
+protocol TabBarControllerDelegate: AnyObject {
+    func tabBarDidLogout()
+}
+
 final class TabBarController: UITabBarController {
+    
+    weak var logoutDelegate: TabBarControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         // MARK: - Images List
@@ -28,6 +35,7 @@ final class TabBarController: UITabBarController {
         profileViewController.presenter = profilePresenter
         profilePresenter.view = profileViewController
         profilePresenter.delegate = self
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(resource: .tabProfileActiveIcon),
@@ -36,18 +44,13 @@ final class TabBarController: UITabBarController {
         
         viewControllers = [imagesListVC, profileViewController]
     }
+    
 }
 
 extension TabBarController: ProfilePresenterDelegate {
     func didLogout() {
-        print("🚪 LOGOUT FROM TABBAR")
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        guard let authVC = storyboard.instantiateViewController(
-            withIdentifier: "AuthViewController"
-        ) as? AuthViewController else { return }
-        
-        let nav = UINavigationController(rootViewController: authVC)
-        view.window?.rootViewController = nav
+        logoutDelegate?.tabBarDidLogout()
     }
 }
+
+

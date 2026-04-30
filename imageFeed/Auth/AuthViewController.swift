@@ -9,34 +9,30 @@ protocol AuthNavigationDelegate: AnyObject {
 
 final class AuthViewController: UIViewController {
     
-    weak var navigationDelegate: AuthNavigationDelegate?
+    // MARK: - IB Outlets
+    @IBOutlet weak var loginButton: UIButton!
     
     // MARK: - Public Properties
-    let showWebViewSegueIdentifier = SegueIdentifiers.showWebViewSegue
     private let oauth2ServiceToken = OAuth2Service.shared
+    weak var navigationDelegate: AuthNavigationDelegate?
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureBackButton()
+       // configureBackButton()
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewSegueIdentifier {
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else {
-                assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
-                return
-            }
-            let authHelper = AuthHelper()
-            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
-            webViewViewController.presenter = webViewPresenter
-            webViewPresenter.view = webViewViewController
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    // MARK: - IB Actions
+    @IBAction func loginButtonTapped() {
+        navigationDelegate?.authViewControllerDidAuthenticate(self)
+    }
+    
+    // MARK: - Public Methods
+    func showAuthErrorAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не по плану", message: "Авторизация не удалась", preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: - Private Methods
@@ -60,19 +56,22 @@ final class AuthViewController: UIViewController {
 extension  AuthViewController: WebViewViewControllerDelegate {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true)
-        UIBlockingProgressHUD.show()
-        fetchOAuthToken(code) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
+        vc.dismiss(animated: true) { [weak self] in
             guard let self else { return }
-            switch result {
-            case .success(let token):
-                OAuth2TokenStorage.shared.token = token
-                self.navigationDelegate?.authViewControllerDidAuthenticate(self)
-                
-            case .failure(let error):
-                self.navigationDelegate?.authViewController(self, didFailWith: error)
-                print(error)
+            
+            self.fetchOAuthToken(code) { result in
+                DispatchQueue.main.async {
+                    
+                    switch result {
+                    case .success(let token):
+                        OAuth2TokenStorage.shared.token = token
+                        self.navigationDelegate?.authViewControllerDidAuthenticate(self)
+                        
+                    case .failure(let error):
+                        self.navigationDelegate?.authViewController(self, didFailWith: error)
+                        print(error)
+                    }
+                }
             }
         }
     }
@@ -80,15 +79,5 @@ extension  AuthViewController: WebViewViewControllerDelegate {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
         self.navigationDelegate?.authViewControllerDidCancel(self)
-    }
-}
-
-extension AuthViewController {
-    
-    func showAuthErrorAlert() {
-        let alert = UIAlertController(title: "Что-то пошло не по плану", message: "Авторизация не удалась", preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
     }
 }

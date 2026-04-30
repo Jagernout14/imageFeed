@@ -66,6 +66,9 @@
                                                 <constraint firstItem="gk2-sR-ozt" firstAttribute="trailing" secondItem="s6D-OW-sgQ" secondAttribute="trailing" id="wHf-bV-H5o"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration" identifier="Identifier: ImagesListCell">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                         <connections>
                                             <outlet property="cellImage" destination="s6D-OW-sgQ" id="ZtG-UO-nDQ"/>
                                             <outlet property="dateLabel" destination="O6L-ve-9A8" id="sQ8-nK-U0I"/>
@@ -102,7 +105,7 @@
         <!--Tab-->
         <scene sceneID="JIy-yw-64K">
             <objects>
-                <tabBarController storyboardIdentifier="TabBarViewController" title="Tab" id="3Q7-g9-Zbk" customClass="TabBarController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabBarController" title="Tab" id="3Q7-g9-Zbk" customClass="TabBarController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vF7-y4-m0v">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -223,7 +226,7 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <segue destination="pWr-AW-mhh" kind="show" identifier="ShowWebView" id="Uas-Bw-KE4"/>
+                                    <action selector="loginButtonTapped" destination="uOd-UH-r6A" eventType="touchUpInside" id="TAy-NK-wfu"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -238,6 +241,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="zmh-Gz-zIM"/>
+                    <connections>
+                        <outlet property="loginButton" destination="ffl-b7-iht" id="1cg-Rc-vdZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHg-JF-Tcj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -265,13 +271,13 @@
         <!--WebView View Controller-->
         <scene sceneID="eWK-BN-Yj5">
             <objects>
-                <viewController storyboardIdentifier="WebViewViewController" id="pWr-AW-mhh" userLabel="WebView View Controller" customClass="WebViewViewController" customModule="imageFeed" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ryc-Dc-hqg" customClass="Web">
+                <viewController storyboardIdentifier="WebViewViewController" id="pWr-AW-mhh" userLabel="WebView View Controller" customClass="WebViewViewController" customModule="imageFeed" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ryc-Dc-hqg">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gWv-ja-wp6">
-                                <rect key="frame" x="0.0" y="172" width="393" height="680"/>
+                                <rect key="frame" x="0.0" y="118" width="393" height="734"/>
                                 <color key="backgroundColor" name="IF_White"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
@@ -279,7 +285,7 @@
                                 </wkWebViewConfiguration>
                             </wkWebView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="MzO-Nq-zgv">
-                                <rect key="frame" x="0.0" y="172" width="393" height="4"/>
+                                <rect key="frame" x="0.0" y="118" width="393" height="4"/>
                                 <color key="tintColor" name="IF_Background"/>
                             </progressView>
                         </subviews>
@@ -299,8 +305,8 @@
                         <nil key="title"/>
                     </navigationItem>
                     <connections>
-                        <outlet property="progressView" destination="MzO-Nq-zgv" id="7Oi-rM-Xn8"/>
-                        <outlet property="webView" destination="gWv-ja-wp6" id="mlu-Sa-eal"/>
+                        <outlet property="progressView" destination="MzO-Nq-zgv" id="esx-gZ-Kne"/>
+                        <outlet property="webView" destination="gWv-ja-wp6" id="D5O-Cy-fFl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rmR-0E-O5c" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

@@ -3,8 +3,8 @@ struct AccessibilityIdentifiers {
     
     //MARK: WebView
     struct WebView {
-        static let webView = "authWebView"
-
+        static let webView = "WebViewViewController"
+        
     }
     
     struct ImageListCell {
@@ -15,6 +15,7 @@ struct AccessibilityIdentifiers {
     
     struct ImagesListView {
         static let showSingleImage = "ShowSingleImage"
+        static let imagesListViewController = "ImagesListViewController"
         
     }
     
@@ -25,5 +26,13 @@ struct AccessibilityIdentifiers {
         static let ProfileViewControllerIdentifier = "ProfileViewController"
     }
     
-   
+    struct AuthViewController {
+        static let authViewController = "AuthViewController"
+    }
+    
+    struct TabBarController {
+        static let tabBarController = "TabBarController"
+    }
+    
+    
 }

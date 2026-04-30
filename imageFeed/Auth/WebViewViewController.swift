@@ -1,7 +1,6 @@
 import UIKit
 import WebKit
 
-//MARK: - WebViewViewControllerDelegate
 protocol WebViewViewControllerDelegate: AnyObject {
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
@@ -29,6 +28,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     
     // MARK: - Private Properties
     private var estimatedProgressObservation: NSKeyValueObservation?
+    private var didSendCode = false
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
@@ -39,6 +39,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
             guard let self else { return }
             presenter?.didUpdateProgressValue(webView.estimatedProgress)
         }
+        
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
     }
@@ -60,20 +61,28 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
 // MARK: - WKNavigationDelegate
 extension WebViewViewController: WKNavigationDelegate {
     
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-    ) {
+    func webView(_ webView: WKWebView,
+                 decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if didSendCode {
+            decisionHandler(.cancel)
+            return
+        }
+        
         if let code = code(from: navigationAction) {
+            didSendCode = true
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
-        } else {
-            decisionHandler(.allow)
+            return
         }
+        
+        decisionHandler(.allow)
     }
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if let url = navigationAction.request.url {
-            return presenter?.code(from: url)
-        }
-        return nil
+        guard let url = navigationAction.request.url else { return nil }
+        
+        let code = presenter?.code(from: url)
+        return code
     }
 }

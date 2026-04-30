@@ -46,11 +46,11 @@ final class ImagesListService {
     
     // MARK: - Public Properties
     static let shared = ImagesListService()
+    var isLoading = false
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     
     // MARK: - Private Properties
     private(set) var photos: [Photo] = []
-    private var isLoading = false
     private var lastLoadedPage: Int?
     private let isoFormatter = ISO8601DateFormatter()
     

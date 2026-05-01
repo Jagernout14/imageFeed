@@ -19,7 +19,7 @@ final class AuthViewController: UIViewController {
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-       // configureBackButton()
+        configureBackButton()
     }
     
     // MARK: - IB Actions

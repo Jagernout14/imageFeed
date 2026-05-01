@@ -7,7 +7,7 @@ final class ImagesListViewControllerTests: XCTestCase {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-            withIdentifier: AccessibilityIdentifiers.ImagesListView.imagesListViewController
+            withIdentifier: AccessibilityIdentifiers.ImagesListViewController.imagesListViewController
         ) as! ImagesListViewController
         
         let presenter = ImagesListPresenterSpy()

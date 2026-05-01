@@ -10,7 +10,7 @@ protocol ProfileViewControllerProtocol: AnyObject {
 final class ProfileViewController: UIViewController {
     
     // MARK: - Public Properties
-    var presenter: ProfilePresenterProtocol?    
+    var presenter: ProfilePresenterProtocol?
     enum SystemImage: String {
         case avatar = "person.circle.fill"
         func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
@@ -29,6 +29,10 @@ final class ProfileViewController: UIViewController {
     private var isProfileLoaded = false
     private var isAvatarLoaded = false
     private let fadingView = UIView()
+    
+    private var placeholderImage: UIImage? {
+        SystemImage.avatar.image(pointSize: 70)?.withTintColor(.ifGrey, renderingMode: .alwaysOriginal)
+    }
     
     
     
@@ -83,14 +87,16 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - UI Settings
     private func setupAvatar() {
-        let avatarPic = UIImage(resource: .userPic)
-        avatarPicView.image = avatarPic
+        avatarPicView.image = placeholderImage
         avatarPicView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarPicView)
         avatarPicView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         avatarPicView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         avatarPicView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
         avatarPicView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        avatarPicView.contentMode = .scaleAspectFill
+        avatarPicView.clipsToBounds = true
+        avatarPicView.layer.cornerRadius = 35
     }
     
     private func setupNameLabel() {
@@ -153,9 +159,7 @@ extension ProfileViewController: ProfileViewControllerProtocol {
     }
     
     func displayAvatar(urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-        
+        guard let url = URL(string: urlString) else { return }        
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
         avatarPicView.kf.indicatorType = .activity
         avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [

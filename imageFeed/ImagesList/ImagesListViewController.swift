@@ -19,7 +19,7 @@ final class ImagesListViewController: UIViewController {
     var presenter: ImagesListPresenterProtocol?
     
     // MARK: - Private Properties
-    private let showSingleImageIdentifier = AccessibilityIdentifiers.ImagesListView.showSingleImage
+    private let showSingleImageIdentifier = AccessibilityIdentifiers.ImagesListViewController.showSingleImage
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -32,7 +32,7 @@ final class ImagesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-      //  setupPresenter()
+    //   setupPresenter()
         setupTableView()
         presenter?.viewDidLoad()
     }
@@ -48,15 +48,17 @@ final class ImagesListViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    private func setupPresenter() {
+    /* private func setupPresenter() {
         let presenter = ImagesListPresenter()
         presenter.view = self
         self.presenter = presenter
     }
+     */
     
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.accessibilityIdentifier = AccessibilityIdentifiers.ImagesListViewController.imagesListViewController
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.estimatedRowHeight = 300
         tableView.rowHeight = UITableView.automaticDimension

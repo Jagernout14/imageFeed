@@ -27,15 +27,24 @@ final class ImagesListCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        layoutIfNeeded()
         
         gradientLayer?.frame = cellImage.bounds
+        contentView.bringSubviewToFront(likeButton)
+
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         likeButton.setImage(UIImage(resource: .likeButtonInactiveIcon), for: .normal)
         likeButton.setImage(UIImage(resource: .likeButtonActiveIcon), for: .selected)
+       
+        likeButton.isAccessibilityElement = true
         likeButton.accessibilityIdentifier = AccessibilityIdentifiers.ImageListCell.likeButton
+        
+        cellImage.isUserInteractionEnabled = false
+            likeButton.isUserInteractionEnabled = true
         
     }
     

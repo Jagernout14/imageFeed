@@ -13,9 +13,9 @@ struct AccessibilityIdentifiers {
         
     }
     
-    struct ImagesListView {
+    struct ImagesListViewController{
         static let showSingleImage = "ShowSingleImage"
-        static let imagesListViewController = "ImagesListViewController"
+        static let imagesListViewController = "ImagesList"
         
     }
     

@@ -85,6 +85,7 @@ final class LoginFlowCoordinator {
             withIdentifier: AccessibilityIdentifiers.WebView.webView
         ) as? WebViewViewController else { return }
         
+        
         let authHelper = AuthHelper(configuration: AuthConfiguration.standard)
         let presenter = WebViewPresenter(authHelper: authHelper)
         webViewController.presenter = presenter
@@ -93,6 +94,7 @@ final class LoginFlowCoordinator {
         
         guard let nav = window.rootViewController as? UINavigationController else { return }
         nav.pushViewController(webViewController, animated: true)
+        
     }
 }
 

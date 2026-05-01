@@ -11,6 +11,9 @@ final class imageFeedUITests: XCTestCase {
         app.launch()
     }
     
+    // С тестами мучаюсь четвертый день. Сейчас очень странное поведение у второго теста. Лента прыгает, но тест проходит
+    // Все тесты проверил, все проганяется успешно
+    
     func testAuth() throws {
         app.buttons["Authenticate"].tap()
         print(app.debugDescription)

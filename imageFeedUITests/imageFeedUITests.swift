@@ -29,7 +29,7 @@ final class imageFeedUITests: XCTestCase {
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
         
         loginTextField.tap()
-        loginTextField.typeText("jagernout@icloud.com")
+        loginTextField.typeText("")
         sleep(1)
         app.toolbars.buttons["Done"].tap()
         
@@ -39,7 +39,7 @@ final class imageFeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
         
         passwordTextField.tap()
-        passwordTextField.typeText("12341234")
+        passwordTextField.typeText("")
         webView.swipeUp()
         
         webView.buttons["Login"].tap()
@@ -71,7 +71,7 @@ final class imageFeedUITests: XCTestCase {
         
         likeButton.tap()
         
-        RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 5))
         
         let cellAgain = table.cells.firstMatch
         XCTAssertTrue(cellAgain.waitForExistence(timeout: 5))

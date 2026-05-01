@@ -46,11 +46,11 @@ final class ImagesListService {
     
     // MARK: - Public Properties
     static let shared = ImagesListService()
+    var isLoading = false
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     
     // MARK: - Private Properties
     private(set) var photos: [Photo] = []
-    private var isLoading = false
     private var lastLoadedPage: Int?
     private let isoFormatter = ISO8601DateFormatter()
     
@@ -64,7 +64,7 @@ final class ImagesListService {
         isLoading = true
         let nextPage = (lastLoadedPage ?? 0) + 1
         guard let token = OAuth2TokenStorage.shared.token,
-        let request = makePhotosUrlRequest(page: nextPage, token: token) else {
+              let request = makePhotosUrlRequest(page: nextPage, token: token) else {
             isLoading = false
             return
         }

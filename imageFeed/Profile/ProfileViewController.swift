@@ -1,12 +1,18 @@
 import UIKit
 import Kingfisher
 
+protocol ProfileViewControllerProtocol: AnyObject {
+    func display(profile: ProfileViewModel)
+    func displayAvatar(urlString: String)
+    func showLogoutConfirmation()
+}
+
 final class ProfileViewController: UIViewController {
     
     // MARK: - Public Properties
+    var presenter: ProfilePresenterProtocol?
     enum SystemImage: String {
         case avatar = "person.circle.fill"
-        
         func image(pointSize: CGFloat, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .default) -> UIImage? {
             let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
             return UIImage(systemName: rawValue)?.withConfiguration(config)
@@ -19,125 +25,86 @@ final class ProfileViewController: UIViewController {
     private lazy var accountLabel = UILabel()
     private lazy var descriptionLabel = UILabel()
     private lazy var logoutButton = UIButton(type: .system)
-    private var animationLayers = Set<CALayer>()
     
-    private let profileService = ProfileService.shared
+    private var isProfileLoaded = false
+    private var isAvatarLoaded = false
+    private let fadingView = UIView()
+    
+    private var placeholderImage: UIImage? {
+        SystemImage.avatar.image(pointSize: 70)?.withTintColor(.ifGrey, renderingMode: .alwaysOriginal)
+    }
+    
+    
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let profile = ProfileService.shared.profile {
-            updateProfileDetails(with: profile)
-        }
+        view.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.ProfileViewControllerIdentifier
+        setupUI()
+        presenter?.viewDidLoad()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        isProfileLoaded = false
+        isAvatarLoaded = false
+    }
+    
+    // MARK: - Public Methods
+    func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: "Пока, Пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
         
+        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            self?.presenter?.didConfirmLogout()
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    // MARK: - Private Methods
+    @objc private func didTapLogoutButton() {
+        
+        presenter?.didTapLogout()
+    }
+    
+    private func setupUI() {
         setupAvatar()
         setupNameLabel()
         setupAccountLabel()
         setupDescriptionLabel()
         setupLogoutButton()
         setupBackground()
-        setupAnimations()
-        
-        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else { return }
-            
-            self.updateAvatar()
-        }
-        updateAvatar()
-        
-        profileServiceObserver = NotificationCenter.default.addObserver(forName: ProfileService.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            guard let self else { return }
-            
-            if let profile = self.profileService.profile {
-                self.updateProfileDetails(with: profile)
-            }
-        }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        updateGradientFrames()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeGradients()
-    }
-    
-    // MARK: - Observer Construction
-    private var profileImageServiceObserver: NSObjectProtocol?
-    private var profileServiceObserver: NSObjectProtocol?
-    
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        
-        let placeholderImage = SystemImage.avatar.image(pointSize: 70)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-        
-        let processor = RoundCornerImageProcessor(cornerRadius: 35)
-        avatarPicView.kf.indicatorType = .activity
-        avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [
-            .processor(processor),
-            .scaleFactor(UIScreen.main.scale),
-            .cacheOriginalImage,
-            .forceRefresh
-        ]) { result in
-            switch result {
-            case .success(let value):
-                self.removeGradients()
-                print(value.image)
-                print(value.cacheType)
-                print(value.source)
-                
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
-    // MARK: - Private Methods
-    @objc private func didTapLogoutButton() {
-        let alert = UIAlertController(title: "Пока, Пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Нет", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Да", style: .default) { _ in
-            self.performLogout()
-        })
-        present(alert, animated: true)
-    }
-    
-    private func performLogout() {
-        ProfileLogoutService.shared.logout()
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let delegate = scene.delegate as? SceneDelegate else { return }
-        delegate.switchToMain()
-    }
-    
-    private func updateProfileDetails(with profile: Profile) {
-        usernameLabel.text = profile.name.isEmpty ? "Имя не указано" : profile.name
-        accountLabel.text = profile.loginName.isEmpty ? "Неизвестный пользователь" : profile.loginName
-        descriptionLabel.text = (profile.bio?.isEmpty ?? true) ? "Профиль не заполнен" : profile.bio
-        removeGradients()
     }
     
     // MARK: - UI Settings
     private func setupAvatar() {
-        let avatarPic = UIImage(resource: .userPic)
-        avatarPicView.image = avatarPic
+        avatarPicView.image = placeholderImage
         avatarPicView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarPicView)
         avatarPicView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         avatarPicView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         avatarPicView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32).isActive = true
         avatarPicView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        avatarPicView.contentMode = .scaleAspectFill
+        avatarPicView.clipsToBounds = true
+        avatarPicView.layer.cornerRadius = 35
     }
     
     private func setupNameLabel() {
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 23)
         usernameLabel.textColor = UIColor(resource: .ifWhite)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        usernameLabel.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.usernameLabel
+        
         view.addSubview(usernameLabel)
         usernameLabel.topAnchor.constraint(equalTo: avatarPicView.bottomAnchor, constant: 8).isActive = true
         usernameLabel.leadingAnchor.constraint(equalTo: avatarPicView.leadingAnchor).isActive = true
@@ -147,6 +114,7 @@ final class ProfileViewController: UIViewController {
         accountLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         accountLabel.textColor = UIColor(resource: .ifGrey)
         accountLabel.translatesAutoresizingMaskIntoConstraints = false
+        accountLabel.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.accountLabel
         view.addSubview(accountLabel)
         accountLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 8).isActive = true
         accountLabel.leadingAnchor.constraint(equalTo: avatarPicView.leadingAnchor).isActive = true
@@ -165,6 +133,7 @@ final class ProfileViewController: UIViewController {
         logoutButton.setImage(UIImage(resource: .exitIcon), for: .normal)
         logoutButton.tintColor = UIColor(resource: .ifRed)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
+        logoutButton.accessibilityIdentifier = AccessibilityIdentifiers.ProfileView.logoutButton
         view.addSubview(logoutButton)
         logoutButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
         logoutButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
@@ -176,58 +145,31 @@ final class ProfileViewController: UIViewController {
     private func setupBackground() {
         view.backgroundColor = UIColor(resource: .ifBackground)
     }
+}
+
+//MARK: - ProfileViewControllerProtocol
+extension ProfileViewController: ProfileViewControllerProtocol {
     
-    private func makeAnimatedGradient(frame: CGRect, cornerRadius: CGFloat) -> CAGradientLayer {
-        let gradient = CAGradientLayer()
-        gradient.frame = frame
+    func display(profile: ProfileViewModel) {
+        usernameLabel.text = profile.name
+        accountLabel.text = profile.login
+        descriptionLabel.text = profile.bio
         
-        gradient.locations = [0, 0.1, 0.3]
-        gradient.colors = [
-            UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
-            UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
-            UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+        isProfileLoaded = true
+    }
+    
+    func displayAvatar(urlString: String) {
+        guard let url = URL(string: urlString) else { return }        
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatarPicView.kf.indicatorType = .activity
+        avatarPicView.kf.setImage(with: url, placeholder: placeholderImage, options: [
+            .processor(processor),
+            .scaleFactor(UIScreen.main.scale),
+            .cacheOriginalImage,
+            .forceRefresh
         ]
-        
-        gradient.startPoint = CGPoint(x: 0, y: 0.5)
-        gradient.endPoint = CGPoint(x: 1, y: 0.5)
-        
-        gradient.cornerRadius = cornerRadius
-        gradient.masksToBounds = true
-        
-        let animation = CABasicAnimation(keyPath: "locations")
-        animation.duration = 1.0
-        animation.fromValue = [0, 0.1, 0.3]
-        animation.toValue = [0, 0.8, 1]
-        animation.repeatCount = .infinity
-        
-        gradient.add(animation, forKey: "gradient")
-        
-        return gradient
-    }
-    
-    private func addGradient(to view: UIView, cornerRadius: CGFloat) {
-        let gradient = makeAnimatedGradient(frame: view.bounds, cornerRadius: cornerRadius)
-        view.layer.addSublayer(gradient)
-        animationLayers.insert(gradient)
-    }
-    
-    private func removeGradients() {
-        animationLayers.forEach {
-            $0.removeFromSuperlayer()
+        ) { [weak self] _ in
+            self?.isAvatarLoaded = true
         }
-        animationLayers.removeAll()
-    }
-    
-    private func updateGradientFrames() {
-        for layer in animationLayers {
-            layer.frame = layer.superlayer?.bounds ?? .zero
-        }
-    }
-    
-    private func setupAnimations() {
-        addGradient(to: avatarPicView, cornerRadius: 35)
-        addGradient(to: usernameLabel, cornerRadius: 0)
-        addGradient(to: accountLabel, cornerRadius: 0)
-        addGradient(to: descriptionLabel, cornerRadius: 0)
     }
 }

@@ -2,21 +2,20 @@ import UIKit
 
 //MARK: - AuthViewControllerDelegate
 protocol AuthViewControllerDelegate: AnyObject {
-    func didAuthenticate(_ vc: AuthViewController)
+    func didAuthenticate(_ vc: AuthViewController, code: String)
+}
+
+protocol SplashViewControllerDelegate: AnyObject {
+    func splashDidFinish(_ viewController: SplashViewController)
 }
 
 final class SplashViewController: UIViewController {
     
     // MARK: - Public Properties
+    weak var delegate: SplashViewControllerDelegate?
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-    
-    // MARK: - Private Properties
-    private let storage = OAuth2TokenStorage.shared
-    private let showAuthenticationScreenSegueIdentifier = "ShowAuthScreen"
-    private let profileService = ProfileService.shared
-    private var isProfileIsLoaded = false
     
     // MARK: - Overrides Methods
     override func viewDidLoad() {
@@ -27,15 +26,9 @@ final class SplashViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard !isProfileIsLoaded else { return }
-        
-        guard let token = storage.token else {
-            presentAuthViewController()
-            return
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.delegate?.splashDidFinish(self)
         }
-        
-        isProfileIsLoaded = true
-        fetchProfile(token: token)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,40 +36,10 @@ final class SplashViewController: UIViewController {
         setNeedsStatusBarAppearanceUpdate()
     }
     
-    // MARK: - Private Methods
-    private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
-        
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "TabBarViewController")
-        
-        window.rootViewController = tabBarController
-    }
-    
-    private func fetchProfile(token: String) {
-        UIBlockingProgressHUD.show()
-        profileService.fetchProfile(token) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
-            guard let self else { return }
-            
-            switch result {
-            case .success(let profile):
-                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
-                self.switchToTabBarController()
-            case .failure(let error):
-                print("Error \(error)")
-                break
-            }
-        }
-    }
-    
     //MARK: UI Setting
     private let logoView = UIImageView()
     private func setupBackGround() {
-        view.backgroundColor = UIColor(named: "IF_Background")
+        view.backgroundColor = UIColor(resource: .ifBackground)
     }
     
     private func setupLogo() {
@@ -88,31 +51,5 @@ final class SplashViewController: UIViewController {
         logoView.heightAnchor.constraint(equalToConstant: 78).isActive = true
         logoView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    }
-    
-    //MARK: Segue to AuthViewController
-    private func presentAuthViewController() {
-        let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        
-        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
-            assertionFailure("AuthViewController не создался")
-            return
-        }
-        
-        authViewController.delegate = self
-        authViewController.modalPresentationStyle = .fullScreen
-        present(authViewController, animated: true)
-    }
-}
-
-//MARK: - AuthViewControllerDelegate
-extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController) {
-        vc.dismiss(animated: true)
-        guard let token = storage.token else { return }
-        
-        isProfileIsLoaded = true
-        fetchProfile(token: token)
-        switchToTabBarController()
     }
 }
